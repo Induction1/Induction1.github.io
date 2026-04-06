@@ -8,7 +8,7 @@ about:
       href: https://github.com/Induction1
 ---
 
-Hi, I'm Michael!
+Welcome, I'm Michael!
 
 I'm a junior studying Statistics & Data Science @ Yale. I'm interested in AI Safety, mechanistic interpretability, puzzles, and math.
 
