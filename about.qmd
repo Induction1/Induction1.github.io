@@ -1,19 +1,16 @@
 ---
-title: "About"
+title: "Michael Gao"
 image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: bluesky
-      text: Bluesky
-      href: https://bsky.app/
-    - icon: linkedin
-      text: LinkedIn
-      href: https://linkedin.com
     - icon: github
-      text: Github
-      href: https://github.com
-
+      text: GitHub
+      href: https://github.com/Induction1
 ---
 
-About this blog
+Third-year at Yale. I do mechanistic interpretability — trying to understand what's actually happening inside neural networks.
+
+Strong math background, new to the field. Writing here to think in public: paper notes, small experiments, and bigger projects as they come together.
+
+Target: [MATS 2026](https://matsprogram.org).
