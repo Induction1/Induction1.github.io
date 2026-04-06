@@ -1,6 +1,5 @@
 ---
 title: "Michael Gao"
-image: profile.jpg
 about:
   template: jolla
   links:
@@ -9,8 +8,8 @@ about:
       href: https://github.com/Induction1
 ---
 
-Third-year at Yale. I do mechanistic interpretability — trying to understand what's actually happening inside neural networks.
+Hi, I'm Michael!
 
-Strong math background, new to the field. Writing here to think in public: paper notes, small experiments, and bigger projects as they come together.
+I'm a junior studying Statistics & Data Science @ Yale. I'm interested in AI Safety, mechanistic interpretability, puzzles, and math.
 
-Target: [MATS 2026](https://matsprogram.org).
+Reach out to me at m [dot] gao [at] yale [dot] edu. Or, [chat with me!](https://calendly.com/m-gao-yale/30min)
