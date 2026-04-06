@@ -8,8 +8,10 @@ website:
   site-url: https://induction1.github.io
   navbar:
     left:
-      - text: "Posts"
-        href: index.qmd
+      - text: "Notes"
+        href: notes.qmd
+      - text: "Research"
+        href: research.qmd
       - about.qmd
     right:
       - icon: github

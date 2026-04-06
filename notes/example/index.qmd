@@ -1,0 +1,8 @@
+---
+title: "Reading: Neel Nanda's Walkthrough of Induction Heads"
+date: "2026-04-06"
+categories: [induction heads, circuits]
+draft: true
+---
+
+Draft post — remove `draft: true` to publish.
