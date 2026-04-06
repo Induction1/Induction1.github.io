@@ -1,5 +1,5 @@
 ---
-title: "induction1"
+title: "Induction1"
 listing:
   - id: notes
     contents: notes

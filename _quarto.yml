@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "induction1"
+  title: "Induction1"
   description: "Notes on mechanistic interpretability"
   site-url: https://induction1.github.io
   navbar:
