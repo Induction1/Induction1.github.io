@@ -1,0 +1,25 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "induction1"
+  description: "Notes on mechanistic interpretability"
+  site-url: https://induction1.github.io
+  navbar:
+    left:
+      - text: "Posts"
+        href: index.qmd
+      - about.qmd
+    right:
+      - icon: github
+        href: https://github.com/Induction1
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
