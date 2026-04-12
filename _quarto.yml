@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Induction1"
+  title: "Michael Gao"
   description: "Notes on mechanistic interpretability"
   site-url: https://induction1.github.io
   draft-mode: unlinked
