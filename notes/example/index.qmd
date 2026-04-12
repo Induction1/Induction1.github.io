@@ -1,8 +1,67 @@
 ---
-title: "Reading: Neel Nanda's Walkthrough of Induction Heads"
-date: "2026-04-06"
-categories: [induction heads, circuits]
+title: "Example: Attention Scores from Scratch"
+date: "2026-04-10"
+categories: [attention, example]
 draft: true
+jupyter: mechinterp
 ---
 
-Draft post — remove `draft: true` to publish.
+This is a demo post showing what Quarto can do — LaTeX, code, and plots in one place.
+
+## The attention formula
+
+Given queries $Q \in \mathbb{R}^{T \times d_k}$ and keys $K \in \mathbb{R}^{T \times d_k}$, the attention pattern is:
+
+$$A = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)$$
+
+The $\sqrt{d_k}$ scaling prevents the dot products from growing large when $d_k$ is big, which would push softmax into saturation (near-zero gradients).
+
+For a single query vector $q$ and key matrix $K$, the score for position $j$ is:
+
+$$a_j = \frac{\exp(q \cdot k_j / \sqrt{d_k})}{\sum_{i} \exp(q \cdot k_i / \sqrt{d_k})}$$
+
+## Computing it by hand
+
+Let's say $d_k = 2$ and we have 3 tokens with:
+
+$$Q = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{bmatrix}, \quad K = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{bmatrix}$$
+
+The raw scores $QK^\top / \sqrt{2}$:
+
+$$\frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 1 & 1 & 2 \end{bmatrix}$$
+
+Row 3 (token 3) attends most strongly to itself — its query $(1,1)$ aligns best with key $(1,1)$.
+
+## In code
+
+```{python}
+import torch
+import torch.nn.functional as F
+import matplotlib.pyplot as plt
+
+Q = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])
+K = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])
+
+d_k = Q.shape[-1]
+scores = Q @ K.T / d_k**0.5
+attn = F.softmax(scores, dim=-1)
+
+print("Attention pattern:")
+print(attn.round(decimals=3))
+```
+
+## Visualizing the pattern
+
+```{python}
+fig, ax = plt.subplots(figsize=(4, 3))
+im = ax.imshow(attn.numpy(), cmap="Blues", vmin=0, vmax=1)
+ax.set_xticks([0,1,2]); ax.set_xticklabels(["tok 1","tok 2","tok 3"])
+ax.set_yticks([0,1,2]); ax.set_yticklabels(["tok 1","tok 2","tok 3"])
+ax.set_xlabel("Key"); ax.set_ylabel("Query")
+ax.set_title("Attention pattern")
+plt.colorbar(im, ax=ax)
+plt.tight_layout()
+plt.show()
+```
+
+The diagonal dominance means each token attends most to itself — makes sense since $Q = K$ here. In a real transformer the weights learned to make $Q \neq K$, which is where interesting structure emerges.

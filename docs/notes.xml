@@ -8,8 +8,295 @@
 <title>Induction1</title>
 <link>https://induction1.github.io/notes.html</link>
 <atom:link href="https://induction1.github.io/notes.xml" rel="self" type="application/rss+xml"/>
-<description>Notes on mechanistic interpretability</description>
+<description>Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting.</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Mon, 06 Apr 2026 19:10:35 GMT</lastBuildDate>
+<lastBuildDate>Sat, 11 Apr 2026 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>[Review] A Mathematical Framework for Transformer Circuits</title>
+  <link>https://induction1.github.io/notes/transformer-circuits/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Notes on <a href="https://transformer-circuits.pub/2021/framework/index.html">Elhage, Nanda, Olsson et al.&nbsp;(2021)</a>. This paper kicked off the Anthropic transformer circuits thread. This is one of the first serious attempts to reverse engineer what’s happening inside a transformer, and more importantly, it develops the <em>mathematical language</em> for doing so. The results are on tiny attention only models, but the framework (residual streams, QK/OV circuits, path expansions) became the foundation for everything that followed in mechanistic interpretability.</p>
+<section id="transformer-overview" class="level2">
+<h2 class="anchored" data-anchor-id="transformer-overview">Transformer overview</h2>
+<p>A decoder only transformer is an embedding, then a series of residual blocks each containing an attention layer followed by an MLP layer, then an unembedding. Every layer reads from the residual stream via a linear projection and writes back to it by adding its output.</p>
+<p><img src="https://latex.codecogs.com/png.latex?x_0%20=%20W_E%20t"> <img src="https://latex.codecogs.com/png.latex?x_%7Bi+1%7D%20=%20x_i%20+%20%5Csum_%7Bh%20%5Cin%20H_i%7D%20h(x_i)"> <img src="https://latex.codecogs.com/png.latex?x_%7Bi+2%7D%20=%20x_%7Bi+1%7D%20+%20m(x_%7Bi+1%7D)"> <img src="https://latex.codecogs.com/png.latex?T(t)%20=%20W_U%20x_%7B-1%7D"></p>
+<p>The paper makes a key simplification by dropping the MLP layers entirely and studying attention only transformers. MLPs are nonlinear and have proven much harder to interpret. Even today, understanding MLP layers remains a major open problem. Attention layers, by contrast, are almost entirely linear: once you fix the attention pattern, everything is just matrix multiplies. This makes them tractable to analyze with linear algebra.</p>
+<p>They also drop biases and layer normalization. Biases can be simulated by folding them into the weights by creating a dimension that’s always 1, and layer norm can be approximately merged into adjacent weight matrices. These simplifications don’t change the fundamental structure, they just strip away noise to reveal what’s really going on.</p>
+</section>
+<section id="the-residual-stream-as-a-communication-channel" class="level2">
+<h2 class="anchored" data-anchor-id="the-residual-stream-as-a-communication-channel">The residual stream as a communication channel</h2>
+<p>Here’s an insight that sounds simple but changes how you think about the whole architecture: the residual stream is just a sum. Each layer adds its contribution, and the result accumulates. Nothing in the architecture processes the residual stream itself. It is purely a communication channel between layers.</p>
+<p>Because everything is linear, the residual stream has no privileged basis: you could rotate it and adjust the weights to compensate without changing behavior. Since layers read and write linearly, you can also multiply out “virtual weights” between any two layers to reason about their interaction directly. And because each attention head operates on a small subspace of the full <img src="https://latex.codecogs.com/png.latex?d_%5Ctext%7Bmodel%7D">, heads can easily write to disjoint subspaces and ignore each other entirely. The catch is that the residual stream is massively oversubscribed. There are far more neurons and head dimensions competing to store information than there are residual stream dimensions to go around, so analyzing weights is more productive than staring at activations.</p>
+</section>
+<section id="attention-heads-and-information-movement" class="level2">
+<h2 class="anchored" data-anchor-id="attention-heads-and-information-movement">Attention heads and information movement</h2>
+<p>Attention heads are independent and additive. The standard “concatenate and multiply” formulation obscures this, but it’s mathematically equivalent to each head computing its own output and adding it to the residual stream separately. The fundamental action of an attention head is moving information from one token’s residual stream to another’s.</p>
+<p>This decomposes cleanly into two independent operations. The <strong>QK circuit</strong> <img src="https://latex.codecogs.com/png.latex?W_E%5ET%20W_%7BQK%7D%5Eh%20W_E"> determines which tokens attend to which, as a bilinear function of source and destination tokens. The <strong>OV circuit</strong> <img src="https://latex.codecogs.com/png.latex?W_U%20W_%7BOV%7D%5Eh%20W_E"> determines what happens to the output logits when a token is attended to. These are both just matrices over the vocabulary, and they can be studied independently. Once you fix the attention pattern, the whole head is linear.</p>
+</section>
+<section id="zero-layer-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="zero-layer-transformers">Zero layer transformers</h2>
+<p>With no attention, a zero layer transformer is just <img src="https://latex.codecogs.com/png.latex?T%20=%20W_U%20W_E">. It can’t move information between tokens, so the best it can do is learn the bigram log likelihood of the next token given the current one. Not interesting on its own, but worth noting that the <img src="https://latex.codecogs.com/png.latex?W_U%20W_E"> term shows up as a “direct path” in every larger transformer, absorbing whatever bigram statistics the rest of the model doesn’t handle.</p>
+</section>
+<section id="one-layer-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="one-layer-transformers">One layer transformers</h2>
+<p>One layer attention only transformers turn out to be an ensemble of a bigram model and a bunch of “skip trigram” models. A skip trigram is a pattern of the form <code>[source] ... [destination] → [out]</code>, where the head attends from the destination token back to the source token and uses that source to shift the logits for the next token. The path expansion of the logits makes this explicit:</p>
+<p><img src="https://latex.codecogs.com/png.latex?T%20=%20%5Ctext%7BId%7D%20%5Cotimes%20W_U%20W_E%20+%20%5Csum_%7Bh%7D%20A%5Eh%20%5Cotimes%20W_U%20W_%7BOV%7D%5Eh%20W_E"></p>
+<p>The first term is the bigram direct path. Each other term is a head’s contribution, split cleanly into an attention pattern <img src="https://latex.codecogs.com/png.latex?A%5Eh"> and an OV matrix <img src="https://latex.codecogs.com/png.latex?W_U%20W_%7BOV%7D%5Eh%20W_E"> that tells you how attending to a source token adjusts the logits.</p>
+<p>The OV and QK matrices are nominally huge, roughly 50k by 50k, but their rank is only <img src="https://latex.codecogs.com/png.latex?d_%5Ctext%7Bhead%7D">, so 64 or 128. They’re low rank factorizations of a giant behavior table, and reading off the largest entries gives you interpretable skip trigrams. Most of what these heads learn is <strong>copying</strong>: the OV circuit boosts the probability of whatever token it attends to, and the QK circuit attends back to tokens that could plausibly come next. This is already a primitive form of in context learning.</p>
+<p>Copying shows up cleanly in the eigenvalues of the OV circuit. If <img src="https://latex.codecogs.com/png.latex?v"> is an eigenvector with positive eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda">, then <img src="https://latex.codecogs.com/png.latex?Mv%20=%20%5Clambda%20v"> means that the set of tokens represented by <img src="https://latex.codecogs.com/png.latex?v"> mutually boost their own logits when attended to. A copying head should have mostly positive eigenvalues, and in practice about 10 of 12 layer 1 heads do. Random matrices have a roughly even split of positive and negative eigenvalues, for contrast.</p>
+<p>The one layer model also exhibits a fun failure mode: because each head factors its behavior through a single source-destination interaction and a single OV matrix, three way interactions leak. If a head learns to boost <code>keep ... in → mind</code> and <code>keep ... at → bay</code>, it will also boost <code>keep ... in → bay</code> and <code>keep ... at → mind</code>. These “skip trigram bugs” are small, but they’re an early example of interpretability surfacing real model failures from the weights alone.</p>
+</section>
+<section id="two-layer-transformers-and-induction-heads" class="level2">
+<h2 class="anchored" data-anchor-id="two-layer-transformers-and-induction-heads">Two layer transformers and induction heads</h2>
+<p>The key difference between one and two layer models is <strong>composition</strong>. A second layer head can read from a subspace that a first layer head wrote to, so its attention pattern or output can depend on what an earlier head did. There are three kinds:</p>
+<ul>
+<li><strong>Q-composition</strong>: <img src="https://latex.codecogs.com/png.latex?W_Q"> of a later head reads a subspace written by an earlier head.</li>
+<li><strong>K-composition</strong>: <img src="https://latex.codecogs.com/png.latex?W_K"> of a later head reads a subspace written by an earlier head.</li>
+<li><strong>V-composition</strong>: <img src="https://latex.codecogs.com/png.latex?W_V"> of a later head reads a subspace written by an earlier head.</li>
+</ul>
+<p>Q and K composition change the <em>attention pattern</em> of the second head, letting it attend based on what earlier heads computed. V-composition is different: it chains value movement with value movement, effectively creating a single “virtual attention head” with attention pattern <img src="https://latex.codecogs.com/png.latex?A%5E%7Bh_2%7D%20A%5E%7Bh_1%7D"> and OV matrix <img src="https://latex.codecogs.com/png.latex?W_%7BOV%7D%5E%7Bh_2%7D%20W_%7BOV%7D%5E%7Bh_1%7D">.</p>
+<p>Path expanding the two layer logit equation gives a direct path, individual head terms identical to the one layer case, and new virtual head terms from V-composition.</p>
+<section id="induction-heads" class="level3">
+<h3 class="anchored" data-anchor-id="induction-heads">Induction heads</h3>
+<p>The main result of the paper. In the two layer model studied, composition is used almost entirely for one thing: constructing <strong>induction heads</strong>. An induction head implements the pattern <code>[a][b] ... [a] → [b]</code>. It looks back through the context for previous occurrences of the current token and predicts whatever came next. This is a much more powerful form of in context learning than the one layer copying heads, and it works even on sequences of random tokens, since it doesn’t rely on bigram-like statistics about which tokens usually follow which.</p>
+<p>A first layer <strong>previous token head</strong> attends from each position to the one before it and copies that token’s information into the residual stream. A second layer head then uses <strong>K-composition</strong> to read those shifted keys: the query is the current token, but the keys have been shifted forward by one position. Matching query to key finds positions where the previous token matches the current one, which is exactly where a repeated sequence would continue. The OV circuit of the second head is a copying matrix, so attending there copies the next token forward.</p>
+<p>Checking the theory: induction heads should have a copying OV matrix and a “matching” QK matrix on the K-composition term. Both conditions correspond to strongly positive eigenvalues, and all the induction heads in the model sit in the extreme corner of this 2D space of eigenvalue positivity. This is not a circular test, because K-composition being large doesn’t mechanically force the resulting matrix to have positive eigenvalues; that only happens if the algorithm really is the induction algorithm.</p>
+</section>
+<section id="term-importance-and-virtual-heads" class="level3">
+<h3 class="anchored" data-anchor-id="term-importance-and-virtual-heads">Term importance and virtual heads</h3>
+<p>Path expansion gives an equation with exponentially many terms: direct path, individual heads, pairs of composed heads, triples, and so on. To check whether the high order virtual head terms actually matter, the authors ablate them using a recursive trick: run the model, record attention patterns, then run again with the patterns frozen and attention head outputs progressively zeroed out. Differences in loss isolate the contribution of each order of V-composition.</p>
+<p>The result: virtual heads from V-composition contribute very little in this two layer model. Almost all the useful behavior lives in the direct path plus individual heads. That said, the number of possible virtual heads grows exponentially with depth, so in larger models they may well carry much more weight. Q and K composition, importantly, are a separate story and clearly do matter here since they’re the mechanism behind induction heads.</p>
+</section>
+</section>
+<section id="where-this-leaves-us" class="level2">
+<h2 class="anchored" data-anchor-id="where-this-leaves-us">Where this leaves us</h2>
+<p>The paper makes no claim to explain real language models. It explains tiny attention only toy models and develops a vocabulary: residual stream, virtual weights, QK and OV circuits, path expansion, composition, induction heads. That vocabulary turns out to be the right one. Even in the presence of MLPs, attention heads still read and write through the residual stream, and circuits built purely out of attention still exist in large models. Induction heads in particular show up in transformers of every size studied since, and they drive much of in context learning.</p>
+<p>As the authors admit, there are certainly limitations. MLPs are two thirds of a standard transformer’s parameters, and this framework says nothing about them. Large chunks of model behavior live there, and until MLP layers yield to a similar decomposition, full reverse engineering of a real model stays out of reach. But the foothold is real. Everything from activation patching to SAEs to attribution graphs sits on top of the conceptual frame this paper put down.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>circuits</category>
+  <category>paper-notes</category>
+  <guid>https://induction1.github.io/notes/transformer-circuits/</guid>
+  <pubDate>Sat, 11 Apr 2026 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Example: Attention Scores from Scratch</title>
+  <link>https://induction1.github.io/notes/example/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>This is a demo post showing what Quarto can do — LaTeX, code, and plots in one place.</p>
+<section id="the-attention-formula" class="level2">
+<h2 class="anchored" data-anchor-id="the-attention-formula">The attention formula</h2>
+<p>Given queries <img src="https://latex.codecogs.com/png.latex?Q%20%5Cin%20%5Cmathbb%7BR%7D%5E%7BT%20%5Ctimes%20d_k%7D"> and keys <img src="https://latex.codecogs.com/png.latex?K%20%5Cin%20%5Cmathbb%7BR%7D%5E%7BT%20%5Ctimes%20d_k%7D">, the attention pattern is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?A%20=%20%5Ctext%7Bsoftmax%7D%5Cleft(%5Cfrac%7BQK%5E%5Ctop%7D%7B%5Csqrt%7Bd_k%7D%7D%5Cright)"></p>
+<p>The <img src="https://latex.codecogs.com/png.latex?%5Csqrt%7Bd_k%7D"> scaling prevents the dot products from growing large when <img src="https://latex.codecogs.com/png.latex?d_k"> is big, which would push softmax into saturation (near-zero gradients).</p>
+<p>For a single query vector <img src="https://latex.codecogs.com/png.latex?q"> and key matrix <img src="https://latex.codecogs.com/png.latex?K">, the score for position <img src="https://latex.codecogs.com/png.latex?j"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?a_j%20=%20%5Cfrac%7B%5Cexp(q%20%5Ccdot%20k_j%20/%20%5Csqrt%7Bd_k%7D)%7D%7B%5Csum_%7Bi%7D%20%5Cexp(q%20%5Ccdot%20k_i%20/%20%5Csqrt%7Bd_k%7D)%7D"></p>
+</section>
+<section id="computing-it-by-hand" class="level2">
+<h2 class="anchored" data-anchor-id="computing-it-by-hand">Computing it by hand</h2>
+<p>Let’s say <img src="https://latex.codecogs.com/png.latex?d_k%20=%202"> and we have 3 tokens with:</p>
+<p><img src="https://latex.codecogs.com/png.latex?Q%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20%5C%5C%200%20&amp;%201%20%5C%5C%201%20&amp;%201%20%5Cend%7Bbmatrix%7D,%20%5Cquad%20K%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20%5C%5C%200%20&amp;%201%20%5C%5C%201%20&amp;%201%20%5Cend%7Bbmatrix%7D"></p>
+<p>The raw scores <img src="https://latex.codecogs.com/png.latex?QK%5E%5Ctop%20/%20%5Csqrt%7B2%7D">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20&amp;%201%20%5C%5C%200%20&amp;%201%20&amp;%201%20%5C%5C%201%20&amp;%201%20&amp;%202%20%5Cend%7Bbmatrix%7D"></p>
+<p>Row 3 (token 3) attends most strongly to itself — its query <img src="https://latex.codecogs.com/png.latex?(1,1)"> aligns best with key <img src="https://latex.codecogs.com/png.latex?(1,1)">.</p>
+</section>
+<section id="in-code" class="level2">
+<h2 class="anchored" data-anchor-id="in-code">In code</h2>
+<div id="0a4d96f8" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.nn.functional <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> F</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">Q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.tensor([[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.</span>], [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>], [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>]])</span>
+<span id="cb1-6">K <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.tensor([[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.</span>], [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>], [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.</span>]])</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">d_k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Q.shape[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb1-9">scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> K.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> d_k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span id="cb1-10">attn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> F.softmax(scores, dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-11"></span>
+<span id="cb1-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Attention pattern:"</span>)</span>
+<span id="cb1-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(attn.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(decimals<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Attention pattern:
+tensor([[0.4010, 0.1980, 0.4010],
+        [0.1980, 0.4010, 0.4010],
+        [0.2480, 0.2480, 0.5030]])</code></pre>
+</div>
+</div>
+</section>
+<section id="visualizing-the-pattern" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-pattern">Visualizing the pattern</h2>
+<div id="25ad2488" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>))</span>
+<span id="cb3-2">im <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.imshow(attn.numpy(), cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Blues"</span>, vmin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, vmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb3-3">ax.set_xticks([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.set_xticklabels([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 1"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 2"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 3"</span>])</span>
+<span id="cb3-4">ax.set_yticks([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.set_yticklabels([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 1"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 2"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tok 3"</span>])</span>
+<span id="cb3-5">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Key"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Query"</span>)</span>
+<span id="cb3-6">ax.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Attention pattern"</span>)</span>
+<span id="cb3-7">plt.colorbar(im, ax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>ax)</span>
+<span id="cb3-8">plt.tight_layout()</span>
+<span id="cb3-9">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://induction1.github.io/notes/example/index_files/figure-html/cell-3-output-1.png" width="335" height="278" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The diagonal dominance means each token attends most to itself — makes sense since <img src="https://latex.codecogs.com/png.latex?Q%20=%20K"> here. In a real transformer the weights learned to make <img src="https://latex.codecogs.com/png.latex?Q%20%5Cneq%20K">, which is where interesting structure emerges.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>attention</category>
+  <category>example</category>
+  <guid>https://induction1.github.io/notes/example/</guid>
+  <pubDate>Fri, 10 Apr 2026 04:00:00 GMT</pubDate>
+</item>
 </channel>
 </rss>

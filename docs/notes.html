@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting.">
 
 <title>Notes – Induction1</title>
 <style>
@@ -82,9 +83,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -183,7 +184,12 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
       <h1 class="title">Notes</h1>
-                      </div>
+                  <div>
+        <div class="description">
+          Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting.
+        </div>
+      </div>
+                </div>
   </div>
     
   
@@ -200,7 +206,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(0)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y2lyY3VpdHM=">circuits <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZXhhbXBsZQ==">example <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cGFwZXItbm90ZXM=">paper-notes <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -214,7 +220,64 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="Y2lyY3VpdHMlMkNwYXBlci1ub3Rlcw==" data-listing-date-sort="1775880000000" data-listing-file-modified-sort="1776016048033" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1722">
+<div class="thumbnail"><a href="./notes/transformer-circuits/index.html" class="no-external">
 
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notes/transformer-circuits/index.html" class="no-external">[Review] A Mathematical Framework for Transformer Circuits</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2lyY3VpdHM='); return false;">circuits</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cGFwZXItbm90ZXM='); return false;">paper-notes</div>
+
+</div>
+<div class="delink listing-description"><a href="./notes/transformer-circuits/index.html" class="no-external">
+Notes on Elhage, Nanda, Olsson et al.&nbsp;(2021). This paper kicked off the Anthropic transformer circuits thread. This is one of the first serious attempts to reverse engineer…<em></em>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./notes/transformer-circuits/index.html" class="no-external">
+<div class="listing-date">
+Apr 11, 2026
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="YXR0ZW50aW9uJTJDZXhhbXBsZQ==" data-listing-date-sort="1775793600000" data-listing-file-modified-sort="1775868718377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="261">
+<div class="thumbnail"><a href="./notes/example/index.html" class="no-external">
+
+<p class="card-img-top"><img loading='lazy' src="notes/example/index_files/figure-html/cell-3-output-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notes/example/index.html" class="no-external">Example: Attention Scores from Scratch</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">attention</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXhhbXBsZQ=='); return false;">example</div>
+
+</div>
+<div class="delink listing-description"><a href="./notes/example/index.html" class="no-external">
+This is a demo post showing what Quarto can do — LaTeX, code, and plots in one place.
+</a></div>
+</div>
+<div class="metadata">
+<a href="./notes/example/index.html" class="no-external">
+<div class="listing-date">
+Apr 10, 2026
+</div>
+</a>
+</div>
+</div>
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
 </div></main> <!-- /main -->

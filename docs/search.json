@@ -4,21 +4,21 @@
     "href": "index.html",
     "title": "Induction1",
     "section": "",
-    "text": "No matching items"
+    "text": "Apr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html#notes",
     "href": "index.html#notes",
     "title": "Induction1",
     "section": "",
-    "text": "No matching items"
+    "text": "Apr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html#research",
     "href": "index.html#research",
     "title": "Induction1",
     "section": "Research",
-    "text": "Research\n\n\n\n\nNo matching items"
+    "text": "Research\n\n\n\n\n\n\n\n\n\n\nSprint: Induction Head Detection in GPT-2\n\n\n\n\n\n\n\n\nApr 6, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "research.html",
@@ -32,13 +32,104 @@
     "href": "notes.html",
     "title": "Notes",
     "section": "",
-    "text": "No matching items"
+    "text": "[Review] A Mathematical Framework for Transformer Circuits\n\n\n\ncircuits\n\npaper-notes\n\n\n\n\n\n\n\n\n\nApr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nExample: Attention Scores from Scratch\n\n\n\nattention\n\nexample\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About Me",
     "section": "",
-    "text": "Hi, I’m Michael!\nI’m a junior studying Statistics & Data Science @ Yale. I’m interested in AI Safety, mechanistic interpretability, puzzles, and math.\nReach out to me at m [dot] gao [at] yale [dot] edu. Or, chat with me!"
+    "text": "Welcome, I’m Michael!\nI’m a junior studying Statistics & Data Science @ Yale. I’m interested in AI Safety, mechanistic interpretability, puzzles, and math.\nReach out to me at m [dot] gao [at] yale [dot] edu. Or, chat with me!"
+  },
+  {
+    "objectID": "notes/quarto-example/index.html",
+    "href": "notes/quarto-example/index.html",
+    "title": "Example: Attention Scores from Scratch",
+    "section": "",
+    "text": "This is a demo post showing what Quarto can do — LaTeX, code, and plots in one place."
+  },
+  {
+    "objectID": "notes/quarto-example/index.html#the-attention-formula",
+    "href": "notes/quarto-example/index.html#the-attention-formula",
+    "title": "Example: Attention Scores from Scratch",
+    "section": "The attention formula",
+    "text": "The attention formula\nGiven queries \\(Q \\in \\mathbb{R}^{T \\times d_k}\\) and keys \\(K \\in \\mathbb{R}^{T \\times d_k}\\), the attention pattern is:\n\\[A = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)\\]\nThe \\(\\sqrt{d_k}\\) scaling prevents the dot products from growing large when \\(d_k\\) is big, which would push softmax into saturation (near-zero gradients).\nFor a single query vector \\(q\\) and key matrix \\(K\\), the score for position \\(j\\) is:\n\\[a_j = \\frac{\\exp(q \\cdot k_j / \\sqrt{d_k})}{\\sum_{i} \\exp(q \\cdot k_i / \\sqrt{d_k})}\\]"
+  },
+  {
+    "objectID": "notes/quarto-example/index.html#computing-it-by-hand",
+    "href": "notes/quarto-example/index.html#computing-it-by-hand",
+    "title": "Example: Attention Scores from Scratch",
+    "section": "Computing it by hand",
+    "text": "Computing it by hand\nLet’s say \\(d_k = 2\\) and we have 3 tokens with:\n\\[Q = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \\end{bmatrix}, \\quad K = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \\end{bmatrix}\\]\nThe raw scores \\(QK^\\top / \\sqrt{2}\\):\n\\[\\frac{1}{\\sqrt{2}}\\begin{bmatrix} 1 & 0 & 1 \\\\ 0 & 1 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}\\]\nRow 3 (token 3) attends most strongly to itself — its query \\((1,1)\\) aligns best with key \\((1,1)\\)."
+  },
+  {
+    "objectID": "notes/quarto-example/index.html#in-code",
+    "href": "notes/quarto-example/index.html#in-code",
+    "title": "Example: Attention Scores from Scratch",
+    "section": "In code",
+    "text": "In code\n\nimport torch\nimport torch.nn.functional as F\nimport matplotlib.pyplot as plt\n\nQ = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])\nK = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])\n\nd_k = Q.shape[-1]\nscores = Q @ K.T / d_k**0.5\nattn = F.softmax(scores, dim=-1)\n\nprint(\"Attention pattern:\")\nprint(attn.round(decimals=3))\n\nAttention pattern:\ntensor([[0.4010, 0.1980, 0.4010],\n        [0.1980, 0.4010, 0.4010],\n        [0.2480, 0.2480, 0.5030]])"
+  },
+  {
+    "objectID": "notes/quarto-example/index.html#visualizing-the-pattern",
+    "href": "notes/quarto-example/index.html#visualizing-the-pattern",
+    "title": "Example: Attention Scores from Scratch",
+    "section": "Visualizing the pattern",
+    "text": "Visualizing the pattern\n\nfig, ax = plt.subplots(figsize=(4, 3))\nim = ax.imshow(attn.numpy(), cmap=\"Blues\", vmin=0, vmax=1)\nax.set_xticks([0,1,2]); ax.set_xticklabels([\"tok 1\",\"tok 2\",\"tok 3\"])\nax.set_yticks([0,1,2]); ax.set_yticklabels([\"tok 1\",\"tok 2\",\"tok 3\"])\nax.set_xlabel(\"Key\"); ax.set_ylabel(\"Query\")\nax.set_title(\"Attention pattern\")\nplt.colorbar(im, ax=ax)\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\nThe diagonal dominance means each token attends most to itself — makes sense since \\(Q = K\\) here. In a real transformer the weights learned to make \\(Q \\neq K\\), which is where interesting structure emerges."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html",
+    "href": "notes/transformer-circuits/index.html",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "",
+    "text": "Notes on Elhage, Nanda, Olsson et al. (2021). This paper kicked off the Anthropic transformer circuits thread. This is one of the first serious attempts to reverse engineer what’s happening inside a transformer, and more importantly, it develops the mathematical language for doing so. The results are on tiny attention only models, but the framework (residual streams, QK/OV circuits, path expansions) became the foundation for everything that followed in mechanistic interpretability."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#transformer-overview",
+    "href": "notes/transformer-circuits/index.html#transformer-overview",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "Transformer overview",
+    "text": "Transformer overview\nA decoder only transformer is an embedding, then a series of residual blocks each containing an attention layer followed by an MLP layer, then an unembedding. Every layer reads from the residual stream via a linear projection and writes back to it by adding its output.\n\\[x_0 = W_E t\\] \\[x_{i+1} = x_i + \\sum_{h \\in H_i} h(x_i)\\] \\[x_{i+2} = x_{i+1} + m(x_{i+1})\\] \\[T(t) = W_U x_{-1}\\]\nThe paper makes a key simplification by dropping the MLP layers entirely and studying attention only transformers. MLPs are nonlinear and have proven much harder to interpret. Even today, understanding MLP layers remains a major open problem. Attention layers, by contrast, are almost entirely linear: once you fix the attention pattern, everything is just matrix multiplies. This makes them tractable to analyze with linear algebra.\nThey also drop biases and layer normalization. Biases can be simulated by folding them into the weights by creating a dimension that’s always 1, and layer norm can be approximately merged into adjacent weight matrices. These simplifications don’t change the fundamental structure, they just strip away noise to reveal what’s really going on."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#the-residual-stream-as-a-communication-channel",
+    "href": "notes/transformer-circuits/index.html#the-residual-stream-as-a-communication-channel",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "The residual stream as a communication channel",
+    "text": "The residual stream as a communication channel\nHere’s an insight that sounds simple but changes how you think about the whole architecture: the residual stream is just a sum. Each layer adds its contribution, and the result accumulates. Nothing in the architecture processes the residual stream itself. It is purely a communication channel between layers.\nBecause everything is linear, the residual stream has no privileged basis: you could rotate it and adjust the weights to compensate without changing behavior. Since layers read and write linearly, you can also multiply out “virtual weights” between any two layers to reason about their interaction directly. And because each attention head operates on a small subspace of the full \\(d_\\text{model}\\), heads can easily write to disjoint subspaces and ignore each other entirely. The catch is that the residual stream is massively oversubscribed. There are far more neurons and head dimensions competing to store information than there are residual stream dimensions to go around, so analyzing weights is more productive than staring at activations."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#attention-heads-and-information-movement",
+    "href": "notes/transformer-circuits/index.html#attention-heads-and-information-movement",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "Attention heads and information movement",
+    "text": "Attention heads and information movement\nAttention heads are independent and additive. The standard “concatenate and multiply” formulation obscures this, but it’s mathematically equivalent to each head computing its own output and adding it to the residual stream separately. The fundamental action of an attention head is moving information from one token’s residual stream to another’s.\nThis decomposes cleanly into two independent operations. The QK circuit \\(W_E^T W_{QK}^h W_E\\) determines which tokens attend to which, as a bilinear function of source and destination tokens. The OV circuit \\(W_U W_{OV}^h W_E\\) determines what happens to the output logits when a token is attended to. These are both just matrices over the vocabulary, and they can be studied independently. Once you fix the attention pattern, the whole head is linear."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#zero-layer-transformers",
+    "href": "notes/transformer-circuits/index.html#zero-layer-transformers",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "Zero layer transformers",
+    "text": "Zero layer transformers\nWith no attention, a zero layer transformer is just \\(T = W_U W_E\\). It can’t move information between tokens, so the best it can do is learn the bigram log likelihood of the next token given the current one. Not interesting on its own, but worth noting that the \\(W_U W_E\\) term shows up as a “direct path” in every larger transformer, absorbing whatever bigram statistics the rest of the model doesn’t handle."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#one-layer-transformers",
+    "href": "notes/transformer-circuits/index.html#one-layer-transformers",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "One layer transformers",
+    "text": "One layer transformers\nOne layer attention only transformers turn out to be an ensemble of a bigram model and a bunch of “skip trigram” models. A skip trigram is a pattern of the form [source] ... [destination] → [out], where the head attends from the destination token back to the source token and uses that source to shift the logits for the next token. The path expansion of the logits makes this explicit:\n\\[T = \\text{Id} \\otimes W_U W_E + \\sum_{h} A^h \\otimes W_U W_{OV}^h W_E\\]\nThe first term is the bigram direct path. Each other term is a head’s contribution, split cleanly into an attention pattern \\(A^h\\) and an OV matrix \\(W_U W_{OV}^h W_E\\) that tells you how attending to a source token adjusts the logits.\nThe OV and QK matrices are nominally huge, roughly 50k by 50k, but their rank is only \\(d_\\text{head}\\), so 64 or 128. They’re low rank factorizations of a giant behavior table, and reading off the largest entries gives you interpretable skip trigrams. Most of what these heads learn is copying: the OV circuit boosts the probability of whatever token it attends to, and the QK circuit attends back to tokens that could plausibly come next. This is already a primitive form of in context learning.\nCopying shows up cleanly in the eigenvalues of the OV circuit. If \\(v\\) is an eigenvector with positive eigenvalue \\(\\lambda\\), then \\(Mv = \\lambda v\\) means that the set of tokens represented by \\(v\\) mutually boost their own logits when attended to. A copying head should have mostly positive eigenvalues, and in practice about 10 of 12 layer 1 heads do. Random matrices have a roughly even split of positive and negative eigenvalues, for contrast.\nThe one layer model also exhibits a fun failure mode: because each head factors its behavior through a single source-destination interaction and a single OV matrix, three way interactions leak. If a head learns to boost keep ... in → mind and keep ... at → bay, it will also boost keep ... in → bay and keep ... at → mind. These “skip trigram bugs” are small, but they’re an early example of interpretability surfacing real model failures from the weights alone."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#two-layer-transformers-and-induction-heads",
+    "href": "notes/transformer-circuits/index.html#two-layer-transformers-and-induction-heads",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "Two layer transformers and induction heads",
+    "text": "Two layer transformers and induction heads\nThe key difference between one and two layer models is composition. A second layer head can read from a subspace that a first layer head wrote to, so its attention pattern or output can depend on what an earlier head did. There are three kinds:\n\nQ-composition: \\(W_Q\\) of a later head reads a subspace written by an earlier head.\nK-composition: \\(W_K\\) of a later head reads a subspace written by an earlier head.\nV-composition: \\(W_V\\) of a later head reads a subspace written by an earlier head.\n\nQ and K composition change the attention pattern of the second head, letting it attend based on what earlier heads computed. V-composition is different: it chains value movement with value movement, effectively creating a single “virtual attention head” with attention pattern \\(A^{h_2} A^{h_1}\\) and OV matrix \\(W_{OV}^{h_2} W_{OV}^{h_1}\\).\nPath expanding the two layer logit equation gives a direct path, individual head terms identical to the one layer case, and new virtual head terms from V-composition.\n\nInduction heads\nThe main result of the paper. In the two layer model studied, composition is used almost entirely for one thing: constructing induction heads. An induction head implements the pattern [a][b] ... [a] → [b]. It looks back through the context for previous occurrences of the current token and predicts whatever came next. This is a much more powerful form of in context learning than the one layer copying heads, and it works even on sequences of random tokens, since it doesn’t rely on bigram-like statistics about which tokens usually follow which.\nA first layer previous token head attends from each position to the one before it and copies that token’s information into the residual stream. A second layer head then uses K-composition to read those shifted keys: the query is the current token, but the keys have been shifted forward by one position. Matching query to key finds positions where the previous token matches the current one, which is exactly where a repeated sequence would continue. The OV circuit of the second head is a copying matrix, so attending there copies the next token forward.\nChecking the theory: induction heads should have a copying OV matrix and a “matching” QK matrix on the K-composition term. Both conditions correspond to strongly positive eigenvalues, and all the induction heads in the model sit in the extreme corner of this 2D space of eigenvalue positivity. This is not a circular test, because K-composition being large doesn’t mechanically force the resulting matrix to have positive eigenvalues; that only happens if the algorithm really is the induction algorithm.\n\n\nTerm importance and virtual heads\nPath expansion gives an equation with exponentially many terms: direct path, individual heads, pairs of composed heads, triples, and so on. To check whether the high order virtual head terms actually matter, the authors ablate them using a recursive trick: run the model, record attention patterns, then run again with the patterns frozen and attention head outputs progressively zeroed out. Differences in loss isolate the contribution of each order of V-composition.\nThe result: virtual heads from V-composition contribute very little in this two layer model. Almost all the useful behavior lives in the direct path plus individual heads. That said, the number of possible virtual heads grows exponentially with depth, so in larger models they may well carry much more weight. Q and K composition, importantly, are a separate story and clearly do matter here since they’re the mechanism behind induction heads."
+  },
+  {
+    "objectID": "notes/transformer-circuits/index.html#where-this-leaves-us",
+    "href": "notes/transformer-circuits/index.html#where-this-leaves-us",
+    "title": "[Review] A Mathematical Framework for Transformer Circuits",
+    "section": "Where this leaves us",
+    "text": "Where this leaves us\nThe paper makes no claim to explain real language models. It explains tiny attention only toy models and develops a vocabulary: residual stream, virtual weights, QK and OV circuits, path expansion, composition, induction heads. That vocabulary turns out to be the right one. Even in the presence of MLPs, attention heads still read and write through the residual stream, and circuits built purely out of attention still exist in large models. Induction heads in particular show up in transformers of every size studied since, and they drive much of in context learning.\nAs the authors admit, there are certainly limitations. MLPs are two thirds of a standard transformer’s parameters, and this framework says nothing about them. Large chunks of model behavior live there, and until MLP layers yield to a similar decomposition, full reverse engineering of a real model stays out of reach. But the foothold is real. Everything from activation patching to SAEs to attribution graphs sits on top of the conceptual frame this paper put down."
   }
 ]

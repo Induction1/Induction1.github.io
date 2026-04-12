@@ -1,5 +1,6 @@
 ---
 title: "Notes"
+description: "Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting."
 listing:
   contents: notes
   feed: true

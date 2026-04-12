@@ -1,0 +1,83 @@
+---
+title: "[Review] A Mathematical Framework for Transformer Circuits"
+date: "2026-04-11"
+categories: [circuits, paper-notes]
+draft: false
+---
+
+Notes on [Elhage, Nanda, Olsson et al. (2021)](https://transformer-circuits.pub/2021/framework/index.html). This paper kicked off the Anthropic transformer circuits thread. This is one of the first serious attempts to reverse engineer what's happening inside a transformer, and more importantly, it develops the *mathematical language* for doing so. The results are on tiny attention only models, but the framework (residual streams, QK/OV circuits, path expansions) became the foundation for everything that followed in mechanistic interpretability.
+
+## Transformer overview
+
+A decoder only transformer is an embedding, then a series of residual blocks each containing an attention layer followed by an MLP layer, then an unembedding. Every layer reads from the residual stream via a linear projection and writes back to it by adding its output.
+
+$$x_0 = W_E t$$
+$$x_{i+1} = x_i + \sum_{h \in H_i} h(x_i)$$
+$$x_{i+2} = x_{i+1} + m(x_{i+1})$$
+$$T(t) = W_U x_{-1}$$
+
+The paper makes a key simplification by dropping the MLP layers entirely and studying attention only transformers. MLPs are nonlinear and have proven much harder to interpret. Even today, understanding MLP layers remains a major open problem. Attention layers, by contrast, are almost entirely linear: once you fix the attention pattern, everything is just matrix multiplies. This makes them tractable to analyze with linear algebra.
+
+They also drop biases and layer normalization. Biases can be simulated by folding them into the weights by creating a dimension that's always 1, and layer norm can be approximately merged into adjacent weight matrices. These simplifications don't change the fundamental structure, they just strip away noise to reveal what's really going on.
+
+## The residual stream as a communication channel
+
+Here's an insight that sounds simple but changes how you think about the whole architecture: the residual stream is just a sum. Each layer adds its contribution, and the result accumulates. Nothing in the architecture processes the residual stream itself. It is purely a communication channel between layers.
+
+Because everything is linear, the residual stream has no privileged basis: you could rotate it and adjust the weights to compensate without changing behavior. Since layers read and write linearly, you can also multiply out "virtual weights" between any two layers to reason about their interaction directly. And because each attention head operates on a small subspace of the full $d_\text{model}$, heads can easily write to disjoint subspaces and ignore each other entirely. The catch is that the residual stream is massively oversubscribed. There are far more neurons and head dimensions competing to store information than there are residual stream dimensions to go around, so analyzing weights is more productive than staring at activations.
+
+## Attention heads and information movement
+
+Attention heads are independent and additive. The standard "concatenate and multiply" formulation obscures this, but it's mathematically equivalent to each head computing its own output and adding it to the residual stream separately. The fundamental action of an attention head is moving information from one token's residual stream to another's.
+
+This decomposes cleanly into two independent operations. The **QK circuit** $W_E^T W_{QK}^h W_E$ determines which tokens attend to which, as a bilinear function of source and destination tokens. The **OV circuit** $W_U W_{OV}^h W_E$ determines what happens to the output logits when a token is attended to. These are both just matrices over the vocabulary, and they can be studied independently. Once you fix the attention pattern, the whole head is linear.
+
+## Zero layer transformers
+
+With no attention, a zero layer transformer is just $T = W_U W_E$. It can't move information between tokens, so the best it can do is learn the bigram log likelihood of the next token given the current one. Not interesting on its own, but worth noting that the $W_U W_E$ term shows up as a "direct path" in every larger transformer, absorbing whatever bigram statistics the rest of the model doesn't handle.
+
+## One layer transformers
+
+One layer attention only transformers turn out to be an ensemble of a bigram model and a bunch of "skip trigram" models. A skip trigram is a pattern of the form `[source] ... [destination] → [out]`, where the head attends from the destination token back to the source token and uses that source to shift the logits for the next token. The path expansion of the logits makes this explicit:
+
+$$T = \text{Id} \otimes W_U W_E + \sum_{h} A^h \otimes W_U W_{OV}^h W_E$$
+
+The first term is the bigram direct path. Each other term is a head's contribution, split cleanly into an attention pattern $A^h$ and an OV matrix $W_U W_{OV}^h W_E$ that tells you how attending to a source token adjusts the logits.
+
+The OV and QK matrices are nominally huge, roughly 50k by 50k, but their rank is only $d_\text{head}$, so 64 or 128. They're low rank factorizations of a giant behavior table, and reading off the largest entries gives you interpretable skip trigrams. Most of what these heads learn is **copying**: the OV circuit boosts the probability of whatever token it attends to, and the QK circuit attends back to tokens that could plausibly come next. This is already a primitive form of in context learning.
+
+Copying shows up cleanly in the eigenvalues of the OV circuit. If $v$ is an eigenvector with positive eigenvalue $\lambda$, then $Mv = \lambda v$ means that the set of tokens represented by $v$ mutually boost their own logits when attended to. A copying head should have mostly positive eigenvalues, and in practice about 10 of 12 layer 1 heads do. Random matrices have a roughly even split of positive and negative eigenvalues, for contrast.
+
+The one layer model also exhibits a fun failure mode: because each head factors its behavior through a single source-destination interaction and a single OV matrix, three way interactions leak. If a head learns to boost `keep ... in → mind` and `keep ... at → bay`, it will also boost `keep ... in → bay` and `keep ... at → mind`. These "skip trigram bugs" are small, but they're an early example of interpretability surfacing real model failures from the weights alone.
+
+## Two layer transformers and induction heads
+
+The key difference between one and two layer models is **composition**. A second layer head can read from a subspace that a first layer head wrote to, so its attention pattern or output can depend on what an earlier head did. There are three kinds:
+
+- **Q-composition**: $W_Q$ of a later head reads a subspace written by an earlier head.
+- **K-composition**: $W_K$ of a later head reads a subspace written by an earlier head.
+- **V-composition**: $W_V$ of a later head reads a subspace written by an earlier head.
+
+Q and K composition change the *attention pattern* of the second head, letting it attend based on what earlier heads computed. V-composition is different: it chains value movement with value movement, effectively creating a single "virtual attention head" with attention pattern $A^{h_2} A^{h_1}$ and OV matrix $W_{OV}^{h_2} W_{OV}^{h_1}$.
+
+Path expanding the two layer logit equation gives a direct path, individual head terms identical to the one layer case, and new virtual head terms from V-composition.
+
+### Induction heads
+
+The main result of the paper. In the two layer model studied, composition is used almost entirely for one thing: constructing **induction heads**. An induction head implements the pattern `[a][b] ... [a] → [b]`. It looks back through the context for previous occurrences of the current token and predicts whatever came next. This is a much more powerful form of in context learning than the one layer copying heads, and it works even on sequences of random tokens, since it doesn't rely on bigram-like statistics about which tokens usually follow which.
+
+A first layer **previous token head** attends from each position to the one before it and copies that token's information into the residual stream. A second layer head then uses **K-composition** to read those shifted keys: the query is the current token, but the keys have been shifted forward by one position. Matching query to key finds positions where the previous token matches the current one, which is exactly where a repeated sequence would continue. The OV circuit of the second head is a copying matrix, so attending there copies the next token forward.
+
+Checking the theory: induction heads should have a copying OV matrix and a "matching" QK matrix on the K-composition term. Both conditions correspond to strongly positive eigenvalues, and all the induction heads in the model sit in the extreme corner of this 2D space of eigenvalue positivity. This is not a circular test, because K-composition being large doesn't mechanically force the resulting matrix to have positive eigenvalues; that only happens if the algorithm really is the induction algorithm.
+
+### Term importance and virtual heads
+
+Path expansion gives an equation with exponentially many terms: direct path, individual heads, pairs of composed heads, triples, and so on. To check whether the high order virtual head terms actually matter, the authors ablate them using a recursive trick: run the model, record attention patterns, then run again with the patterns frozen and attention head outputs progressively zeroed out. Differences in loss isolate the contribution of each order of V-composition.
+
+The result: virtual heads from V-composition contribute very little in this two layer model. Almost all the useful behavior lives in the direct path plus individual heads. That said, the number of possible virtual heads grows exponentially with depth, so in larger models they may well carry much more weight. Q and K composition, importantly, are a separate story and clearly do matter here since they're the mechanism behind induction heads.
+
+## Where this leaves us
+
+The paper makes no claim to explain real language models. It explains tiny attention only toy models and develops a vocabulary: residual stream, virtual weights, QK and OV circuits, path expansion, composition, induction heads. That vocabulary turns out to be the right one. Even in the presence of MLPs, attention heads still read and write through the residual stream, and circuits built purely out of attention still exist in large models. Induction heads in particular show up in transformers of every size studied since, and they drive much of in context learning.
+
+As the authors admit, there are certainly limitations. MLPs are two thirds of a standard transformer's parameters, and this framework says nothing about them. Large chunks of model behavior live there, and until MLP layers yield to a similar decomposition, full reverse engineering of a real model stays out of reach. But the foothold is real. Everything from activation patching to SAEs to attribution graphs sits on top of the conceptual frame this paper put down.

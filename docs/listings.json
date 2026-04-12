@@ -1,7 +1,11 @@
 [
   {
     "listing": "/index.html",
-    "items": []
+    "items": [
+      "/notes/transformer-circuits/index.html",
+      "/notes/example/index.html",
+      "/research/example/index.html"
+    ]
   },
   {
     "listing": "/research.html",
@@ -9,6 +13,9 @@
   },
   {
     "listing": "/notes.html",
-    "items": []
+    "items": [
+      "/notes/transformer-circuits/index.html",
+      "/notes/example/index.html"
+    ]
   }
 ]
