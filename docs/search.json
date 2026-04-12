@@ -1,24 +1,17 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Induction1",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
     "section": "",
-    "text": "Apr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
+    "text": "Welcome, I’m Michael!\nI’m a junior studying Statistics & Data Science @ Yale. I’m interested in AI Safety, mechanistic interpretability, puzzles, and math.\nReach out to me at m [dot] gao [at] yale [dot] edu. Or, chat with me!"
   },
   {
-    "objectID": "index.html#notes",
-    "href": "index.html#notes",
-    "title": "Induction1",
+    "objectID": "notes.html",
+    "href": "notes.html",
+    "title": "Notes",
     "section": "",
-    "text": "Apr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html#research",
-    "href": "index.html#research",
-    "title": "Induction1",
-    "section": "Research",
-    "text": "Research\n\n\n\n\n\n\n\n\n\n\nSprint: Induction Head Detection in GPT-2\n\n\n\n\n\n\n\n\nApr 6, 2026\n\n\n\n\n\nNo matching items"
+    "text": "[Review] A Mathematical Framework for Transformer Circuits\n\n\n\ncircuits\n\npaper-notes\n\n\n\n\n\n\n\n\n\nApr 11, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "research.html",
@@ -28,53 +21,25 @@
     "text": "No matching items"
   },
   {
-    "objectID": "notes.html",
-    "href": "notes.html",
-    "title": "Notes",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Induction1",
     "section": "",
-    "text": "[Review] A Mathematical Framework for Transformer Circuits\n\n\n\ncircuits\n\npaper-notes\n\n\n\n\n\n\n\n\n\nApr 11, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nExample: Attention Scores from Scratch\n\n\n\nattention\n\nexample\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\n\n\n\nNo matching items"
+    "text": "Apr 11, 2026\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
+    "objectID": "index.html#notes",
+    "href": "index.html#notes",
+    "title": "Induction1",
     "section": "",
-    "text": "Welcome, I’m Michael!\nI’m a junior studying Statistics & Data Science @ Yale. I’m interested in AI Safety, mechanistic interpretability, puzzles, and math.\nReach out to me at m [dot] gao [at] yale [dot] edu. Or, chat with me!"
+    "text": "Apr 11, 2026\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "notes/quarto-example/index.html",
-    "href": "notes/quarto-example/index.html",
-    "title": "Example: Attention Scores from Scratch",
-    "section": "",
-    "text": "This is a demo post showing what Quarto can do — LaTeX, code, and plots in one place."
-  },
-  {
-    "objectID": "notes/quarto-example/index.html#the-attention-formula",
-    "href": "notes/quarto-example/index.html#the-attention-formula",
-    "title": "Example: Attention Scores from Scratch",
-    "section": "The attention formula",
-    "text": "The attention formula\nGiven queries \\(Q \\in \\mathbb{R}^{T \\times d_k}\\) and keys \\(K \\in \\mathbb{R}^{T \\times d_k}\\), the attention pattern is:\n\\[A = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)\\]\nThe \\(\\sqrt{d_k}\\) scaling prevents the dot products from growing large when \\(d_k\\) is big, which would push softmax into saturation (near-zero gradients).\nFor a single query vector \\(q\\) and key matrix \\(K\\), the score for position \\(j\\) is:\n\\[a_j = \\frac{\\exp(q \\cdot k_j / \\sqrt{d_k})}{\\sum_{i} \\exp(q \\cdot k_i / \\sqrt{d_k})}\\]"
-  },
-  {
-    "objectID": "notes/quarto-example/index.html#computing-it-by-hand",
-    "href": "notes/quarto-example/index.html#computing-it-by-hand",
-    "title": "Example: Attention Scores from Scratch",
-    "section": "Computing it by hand",
-    "text": "Computing it by hand\nLet’s say \\(d_k = 2\\) and we have 3 tokens with:\n\\[Q = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \\end{bmatrix}, \\quad K = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \\end{bmatrix}\\]\nThe raw scores \\(QK^\\top / \\sqrt{2}\\):\n\\[\\frac{1}{\\sqrt{2}}\\begin{bmatrix} 1 & 0 & 1 \\\\ 0 & 1 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}\\]\nRow 3 (token 3) attends most strongly to itself — its query \\((1,1)\\) aligns best with key \\((1,1)\\)."
-  },
-  {
-    "objectID": "notes/quarto-example/index.html#in-code",
-    "href": "notes/quarto-example/index.html#in-code",
-    "title": "Example: Attention Scores from Scratch",
-    "section": "In code",
-    "text": "In code\n\nimport torch\nimport torch.nn.functional as F\nimport matplotlib.pyplot as plt\n\nQ = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])\nK = torch.tensor([[1., 0.], [0., 1.], [1., 1.]])\n\nd_k = Q.shape[-1]\nscores = Q @ K.T / d_k**0.5\nattn = F.softmax(scores, dim=-1)\n\nprint(\"Attention pattern:\")\nprint(attn.round(decimals=3))\n\nAttention pattern:\ntensor([[0.4010, 0.1980, 0.4010],\n        [0.1980, 0.4010, 0.4010],\n        [0.2480, 0.2480, 0.5030]])"
-  },
-  {
-    "objectID": "notes/quarto-example/index.html#visualizing-the-pattern",
-    "href": "notes/quarto-example/index.html#visualizing-the-pattern",
-    "title": "Example: Attention Scores from Scratch",
-    "section": "Visualizing the pattern",
-    "text": "Visualizing the pattern\n\nfig, ax = plt.subplots(figsize=(4, 3))\nim = ax.imshow(attn.numpy(), cmap=\"Blues\", vmin=0, vmax=1)\nax.set_xticks([0,1,2]); ax.set_xticklabels([\"tok 1\",\"tok 2\",\"tok 3\"])\nax.set_yticks([0,1,2]); ax.set_yticklabels([\"tok 1\",\"tok 2\",\"tok 3\"])\nax.set_xlabel(\"Key\"); ax.set_ylabel(\"Query\")\nax.set_title(\"Attention pattern\")\nplt.colorbar(im, ax=ax)\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\nThe diagonal dominance means each token attends most to itself — makes sense since \\(Q = K\\) here. In a real transformer the weights learned to make \\(Q \\neq K\\), which is where interesting structure emerges."
+    "objectID": "index.html#research",
+    "href": "index.html#research",
+    "title": "Induction1",
+    "section": "Research",
+    "text": "Research\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "notes/transformer-circuits/index.html",

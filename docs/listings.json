@@ -1,10 +1,8 @@
 [
   {
-    "listing": "/index.html",
+    "listing": "/notes.html",
     "items": [
-      "/notes/transformer-circuits/index.html",
-      "/notes/example/index.html",
-      "/research/example/index.html"
+      "/notes/transformer-circuits/index.html"
     ]
   },
   {
@@ -12,10 +10,9 @@
     "items": []
   },
   {
-    "listing": "/notes.html",
+    "listing": "/index.html",
     "items": [
-      "/notes/transformer-circuits/index.html",
-      "/notes/example/index.html"
+      "/notes/transformer-circuits/index.html"
     ]
   }
 ]

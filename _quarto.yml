@@ -6,7 +6,7 @@ website:
   title: "Induction1"
   description: "Notes on mechanistic interpretability"
   site-url: https://induction1.github.io
-  draft-mode: visible
+  draft-mode: unlinked
   navbar:
     left:
       - text: "Notes"
