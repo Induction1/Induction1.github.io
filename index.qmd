@@ -1,5 +1,6 @@
 ---
-title: "Induction1"
+title: "Michael Gao"
+subtitle: "Notes and research in mechanistic interpretability"
 listing:
   - id: notes
     contents: notes
