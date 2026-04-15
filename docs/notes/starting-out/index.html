@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting.">
+<meta name="dcterms.date" content="2026-04-14">
 
-<title>Notes – Michael Gao</title>
+<title>The Field at a Glance – Michael Gao</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -27,25 +27,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,77 +71,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Michael Gao" href="notes.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Michael Gao</span>
     </a>
   </div>
@@ -154,15 +94,15 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./notes.html" aria-current="page"> 
+    <a class="nav-link" href="../../notes.html"> 
 <span class="menu-text">Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./research.html"> 
+    <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About Me</span></a>
   </li>  
 </ul>
@@ -180,105 +120,138 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Notes</h1>
-                  <div>
-        <div class="description">
-          Study notes and paper summaries on mechinterp. Some write ups are partially AI assisted for faster drafting.
-        </div>
-      </div>
-                </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta column-page-left">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y2lyY3VpdHM=">circuits <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cGFwZXItbm90ZXM=">paper-notes <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmVmbGVjdGlvbg==">reflection <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-landscape" id="toc-the-landscape" class="nav-link active" data-scroll-target="#the-landscape">The landscape</a></li>
+  <li><a href="#theories-of-change" id="toc-theories-of-change" class="nav-link" data-scroll-target="#theories-of-change">Theories of change</a></li>
+  <li><a href="#how-researchers-actually-research" id="toc-how-researchers-actually-research" class="nav-link" data-scroll-target="#how-researchers-actually-research">How researchers actually research</a></li>
+  <li><a href="#transferable-strengths-of-mech-interp-researchers" id="toc-transferable-strengths-of-mech-interp-researchers" class="nav-link" data-scroll-target="#transferable-strengths-of-mech-interp-researchers">Transferable strengths of mech interp researchers</a></li>
+  <li><a href="#what-is-exciting-now-chain-of-thought-monitorability" id="toc-what-is-exciting-now-chain-of-thought-monitorability" class="nav-link" data-scroll-target="#what-is-exciting-now-chain-of-thought-monitorability">What is exciting now: chain of thought monitorability</a>
+  <ul class="collapse">
+  <li><a href="#cot-faithfulness" id="toc-cot-faithfulness" class="nav-link" data-scroll-target="#cot-faithfulness">CoT faithfulness</a></li>
+  <li><a href="#latent-cot-interpretability" id="toc-latent-cot-interpretability" class="nav-link" data-scroll-target="#latent-cot-interpretability">Latent CoT interpretability</a></li>
+  <li><a href="#why-this-over-everything-else" id="toc-why-this-over-everything-else" class="nav-link" data-scroll-target="#why-this-over-everything-else">Why this over everything else</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">The Field at a Glance</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">reflection</div>
+  </div>
+  </div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 14, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
 
+<p><em>Foreword: the views below draw heavily on Neel Nanda’s writing, conversations with several Yale professors, and my own reading and reflection. Credit where it’s due; mistakes are mine.</em></p>
+<p>Mech interp is a large field, and it is impossible to do research at the forefront of every part of it. I want to figure out how to contribute. The field is young, accessible, and full of opportunities, and it is arguably one of the most crucial and neglected parts of AI safety. The flip side is that there is a lot of slop: incorrect conclusions, fancy looking tests, and traps that can waste hundreds of hours. This post collects what I have learned while trying to skim the frontier of current mech interp research.</p>
+<section id="the-landscape" class="level2">
+<h2 class="anchored" data-anchor-id="the-landscape">The landscape</h2>
+<p>Two or three years ago, the dominant attitude was gung-ho. People wanted to completely reverse engineer models, and believed that doing so would give a total and final solution for AI safety. That has not worked out. Starting from <em>A Mathematical Framework for Transformer Circuits</em>, we have been stumped at every step of trying to decode an entire model. We have no great account of positional embeddings, and MLPs remain stubbornly resistant to interpretation. The tools we have let us pick apart the most salient and human understandable parts of a model, but as Neel Nanda puts it, much of what a model does is small bits of machine bias that humans can’t or don’t care to understand.</p>
+<p>Two things have driven the field away from that frame. First, models are now capable enough to exhibit genuinely safety relevant behaviors: scheming, eval awareness, deception. Second, retrospective disappointment. Ambitious mech interp made less progress than hoped, and existing techniques struggle with large models, agentic settings, and long chains of thought.</p>
+<p>So over the last year, interest has shifted toward finding important and usable ways to interpret <em>parts</em> of models, and applying those techniques to downstream tasks. Fully disentangling a model is insanely hard. Understanding the important parts of its capabilities and being able to steer or edit them is almost as good, and it is actually tractable.</p>
+</section>
+<section id="theories-of-change" class="level2">
+<h2 class="anchored" data-anchor-id="theories-of-change">Theories of change</h2>
+<p>Nanda’s recent Alignment Forum post lays out four theories of change for mech interp:</p>
+<ol type="1">
+<li><strong>Science of misalignment.</strong> Figuring out whether models simply misunderstand instructions, or whether they have ulterior motives when being tested.</li>
+<li><strong>Empowering other safety areas.</strong> CoT monitoring, eval awareness suppression, conceptual model psychology.</li>
+<li><strong>Preventing egregiously misaligned actions.</strong> Stopping sandbagging, enabling cheap monitoring, investigating flagged behavior.</li>
+<li><strong>Directly helping align models.</strong> Preventative steering, CAFT, and similar.</li>
+</ol>
+<p>Work tends to fall into two buckets: (a) directly backwards engineered from a specific theory of change, and (b) robustly useful settings that look good from multiple angles. The common thread is <strong>pragmatic interp over aspirational interp</strong>: pick tractable sub-problems where qualitative, case specific, unsupervised analysis actually beats other methods, and build toward theories of change that do not require what you can’t deliver.</p>
+<p>Two concepts make this concrete. A <strong>North Star</strong> is a meaningful stepping stone goal that connects to AGI going well. A <strong>proxy task</strong> is an objective empirical task on today’s models that tracks progress toward the North Star. Good research keeps both in view at once.</p>
+</section>
+<section id="how-researchers-actually-research" class="level2">
+<h2 class="anchored" data-anchor-id="how-researchers-actually-research">How researchers actually research</h2>
+<p>The field has a strong bias toward fancy, intellectually exciting techniques, and this leads to bad tactical decisions. The guiding principle is to use the simplest method that works. The order of attempts:</p>
+<ol type="1">
+<li>Prompting</li>
+<li>Reading the chain of thought</li>
+<li>Prefill attacks</li>
+<li>Steering vectors</li>
+<li>Probes</li>
+<li>White box and mechanistic techniques</li>
+</ol>
+<p>An honest assessment of SAEs fits naturally here. They are strong for <strong>unsupervised discovery</strong>: finding unexpected things like entity recognition, implicit planning, and hidden goals. They are weak for tasks with a clear target, where constructing a dataset to investigate directly tends to outperform them. They are also weak for generalization out of distribution and for unlearning.</p>
+</section>
+<section id="transferable-strengths-of-mech-interp-researchers" class="level2">
+<h2 class="anchored" data-anchor-id="transferable-strengths-of-mech-interp-researchers">Transferable strengths of mech interp researchers</h2>
+<p>Nanda identifies five:</p>
+<ol type="1">
+<li><strong>Working with model internals.</strong> Steering, probing, activation patching. These tools have different failure modes than standard ML.</li>
+<li><strong>Deep dives.</strong> Taking a question about model behavior and producing a reliable, principled explanation. Good for auditing, red teaming, and confirming suspected misbehavior.</li>
+<li><strong>Scientific mindset.</strong> Forming and testing hypotheses about complex phenomena with no clear ground truth. Designing experiments to falsify claims about fuzzy questions.</li>
+<li><strong>Qualitative insight.</strong> Using SAEs and similar tools to find the key factors driving a specific behavior. Model biology work and shutdown resistance are examples.</li>
+<li><strong>Unsupervised discovery.</strong> Surfacing hypotheses you would not have thought to look for. Linear world models in Othello, entity recognition in LLMs.</li>
+</ol>
+</section>
+<section id="what-is-exciting-now-chain-of-thought-monitorability" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-exciting-now-chain-of-thought-monitorability">What is exciting now: chain of thought monitorability</h2>
+<p>Of all the open directions, the one I find most compelling is chain of thought monitorability. The pitch is simple. Today’s frontier reasoning models think aloud in English before answering. If we can trust the CoT, safety gets dramatically easier: we read the CoT and check for anything suspicious. This is the cheapest alignment tool we have ever had. The question is whether it actually works, and for how long.</p>
+<section id="cot-faithfulness" class="level3">
+<h3 class="anchored" data-anchor-id="cot-faithfulness">CoT faithfulness</h3>
+<p>The naive safety strategy is to read the CoT and look for red flags. There is real evidence this works sometimes and fails other times. Arcuschin et al.&nbsp;and Chen et al.&nbsp;both document cases of <strong>unfaithful</strong> CoT, where the reasoning the model writes is not the reasoning the model used. Several distinct failure modes show up:</p>
+<ol type="1">
+<li><strong>Post hoc rationalization.</strong> The model picks an answer first and then constructs a plausible justification (Arcuschin et al., Lindsey et al.).</li>
+<li><strong>Hidden hint following.</strong> Given a hint, the model changes its answer but does not admit to using the hint (Chen et al.).</li>
+<li><strong>Logical shortcuts.</strong> Stuck on a math problem, the model claims a valid proof while quietly skipping steps (Arcuschin et al.).</li>
+<li><strong>Last minute flips.</strong> A reasonable CoT ends with a final answer that contradicts the reasoning (Arcuschin et al.).</li>
+</ol>
+<p>These are distinct phenomena with potentially distinct mechanisms, and being able to <em>tell them apart</em> is itself a research question with traction.</p>
+<p>A few directions feel tractable:</p>
+<ul>
+<li><strong>Induce suspicious reasoning and see what happens.</strong> Train the CoT to be distorted, or tell the model its CoT is being monitored. Does it still do the bad behavior but with a cleaner CoT? How complex a behavior can it hide?</li>
+<li><strong>Synthetic document finetuning.</strong> Train a model on synthetic documents to believe it should have an unfaithful CoT, then interpret what is happening inside. This is the kind of model organism setup that could actually be mechanistically pinned down.</li>
+<li><strong>Causal importance of CoT.</strong> Can we tell when a CoT was causally important for a model’s answer? This is subtle. A causally irrelevant CoT can still produce the same answer, and editing the CoT knocks the model off distribution in ways that change the answer for unrelated reasons.</li>
+<li><strong>Better monitors.</strong> Design metrics for whether the CoT is really telling us what we think it is.</li>
+</ul>
+</section>
+<section id="latent-cot-interpretability" class="level3">
+<h3 class="anchored" data-anchor-id="latent-cot-interpretability">Latent CoT interpretability</h3>
+<p>At some point we probably stop using English CoT. Models will reason in latent vectors, and the cheap safety tool goes away. Figuring out how much interpretability can make up for that loss is a big deal.</p>
+<p>The glaring flaw is that we do not know what future latent reasoning models will actually look like. There are contenders, though, and projects targeting any serious contender are probably fruitful, with the caveat that the more specific a project is to one model, the less its lessons generalize.</p>
+<p>A concrete starting point: pick an open source latent CoT model, pick a task with high serial depth like a hard math or logic problem, and try to interpret what is happening. De-risk with a mini-project first. Filter for models with hype behind them and that have been shown effective at reasonable scale. A natural extension is to test how well existing techniques (probes, SAEs, activation patching) transfer.</p>
+</section>
+<section id="why-this-over-everything-else" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-over-everything-else">Why this over everything else</h3>
+<p>Three reasons. First, it connects directly to a theory of change (empowering other safety areas, specifically CoT monitoring), and also to science of misalignment, since unfaithful CoT is the clearest window into “does the model have ulterior motives.” Second, the proxy tasks are concrete and run on today’s models. Third, there is a built-in deadline: the tool becomes less useful every time a new architecture moves reasoning out of natural language.</p>
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cmVmbGVjdGlvbg==" data-listing-date-sort="1776139200000" data-listing-file-modified-sort="1776212881592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1358">
-<div class="thumbnail"><a href="./notes/starting-out/index.html" class="no-external">
+</section>
+</section>
 
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./notes/starting-out/index.html" class="no-external">The Field at a Glance</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmVmbGVjdGlvbg=='); return false;">reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="./notes/starting-out/index.html" class="no-external">
-<em>Foreword: the views below draw heavily on Neel Nanda’s writing, conversations with several Yale professors, and my own reading and reflection. Credit where it’s due;…</em>
-</a></div>
-</div>
-<div class="metadata">
-<a href="./notes/starting-out/index.html" class="no-external">
-<div class="listing-date">
-Apr 14, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Y2lyY3VpdHMlMkNwYXBlci1ub3Rlcw==" data-listing-date-sort="1775880000000" data-listing-file-modified-sort="1776016048033" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1722">
-<div class="thumbnail"><a href="./notes/transformer-circuits/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./notes/transformer-circuits/index.html" class="no-external">[Review] A Mathematical Framework for Transformer Circuits</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Y2lyY3VpdHM='); return false;">circuits</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cGFwZXItbm90ZXM='); return false;">paper-notes</div>
-
-</div>
-<div class="delink listing-description"><a href="./notes/transformer-circuits/index.html" class="no-external">
-Notes on Elhage, Nanda, Olsson et al.&nbsp;(2021). This paper kicked off the Anthropic transformer circuits thread. This is one of the first serious attempts to reverse engineer…<em></em>
-</a></div>
-</div>
-<div class="metadata">
-<a href="./notes/transformer-circuits/index.html" class="no-external">
-<div class="listing-date">
-Apr 11, 2026
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

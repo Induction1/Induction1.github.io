@@ -2,6 +2,7 @@
   {
     "listing": "/notes.html",
     "items": [
+      "/notes/starting-out/index.html",
       "/notes/transformer-circuits/index.html"
     ]
   },
@@ -12,7 +13,9 @@
   {
     "listing": "/index.html",
     "items": [
-      "/notes/transformer-circuits/index.html"
+      "/notes/starting-out/index.html",
+      "/notes/transformer-circuits/index.html",
+      "/research/example/index.html"
     ]
   }
 ]
