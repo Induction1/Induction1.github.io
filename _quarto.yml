@@ -6,7 +6,7 @@ website:
   title: "Michael Gao"
   description: "Notes on mechanistic interpretability"
   site-url: https://induction1.github.io
-  draft-mode: unlinked
+  draft-mode: gone
   navbar:
     left:
       - text: "Notes"

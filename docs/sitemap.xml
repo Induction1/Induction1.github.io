@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://induction1.github.io/notes/starting-out/index.html</loc>
+    <lastmod>2026-04-15T00:28:01.592Z</lastmod>
+  </url>
+  <url>
     <loc>https://induction1.github.io/about.html</loc>
     <lastmod>2026-04-15T01:15:52.201Z</lastmod>
   </url>
@@ -19,9 +23,5 @@
   <url>
     <loc>https://induction1.github.io/notes/transformer-circuits/index.html</loc>
     <lastmod>2026-04-12T17:47:28.033Z</lastmod>
-  </url>
-  <url>
-    <loc>https://induction1.github.io/notes/starting-out/index.html</loc>
-    <lastmod>2026-04-15T00:28:01.592Z</lastmod>
   </url>
 </urlset>

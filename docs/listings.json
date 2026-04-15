@@ -14,8 +14,7 @@
     "listing": "/index.html",
     "items": [
       "/notes/starting-out/index.html",
-      "/notes/transformer-circuits/index.html",
-      "/research/example/index.html"
+      "/notes/transformer-circuits/index.html"
     ]
   }
 ]
