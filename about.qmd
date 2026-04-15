@@ -6,6 +6,9 @@ about:
     - icon: github
       text: GitHub
       href: https://github.com/Induction1
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/michael-gao-yale27
 ---
 
 Welcome, I'm Michael!
