@@ -1,8 +1,0 @@
----
-title: "Sprint: Induction Head Detection in GPT-2"
-date: "2026-04-06"
-categories: [induction heads, gpt-2]
-draft: true
----
-
-Draft post — remove `draft: true` to publish.
