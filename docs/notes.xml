@@ -19,6 +19,7 @@
 
 
 
+
 <p><em>Foreword: the views below draw heavily on Neel Nanda’s writing, conversations with several Yale professors, and my own reading and reflection. Credit where it’s due; mistakes are mine.</em></p>
 <p>Mech interp is a large field, and it is impossible to do research at the forefront of every part of it. I want to figure out how to contribute. The field is young, accessible, and full of opportunities, and it is arguably one of the most crucial and neglected parts of AI safety. The flip side is that there is a lot of slop: incorrect conclusions, fancy looking tests, and traps that can waste hundreds of hours. This post collects what I have learned while trying to skim the frontier of current mech interp research.</p>
 <section id="the-landscape" class="level2">
@@ -107,6 +108,7 @@
   <title>[Review] A Mathematical Framework for Transformer Circuits</title>
   <link>https://induction1.github.io/notes/transformer-circuits/</link>
   <description><![CDATA[ 
+
 
 
 

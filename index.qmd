@@ -6,22 +6,35 @@ listing:
     contents: notes
     sort: "date desc"
     type: default
-    max-items: 3
+    fields: [date, title, categories]
   - id: research
     contents: research
     sort: "date desc"
     type: default
-    max-items: 3
+    fields: [date, title, categories]
 page-layout: full
 title-block-banner: true
+toc: false
 ---
 
+::::: {.grid}
+
+:::: {.g-col-12 .g-col-md-6 .notes-col}
 ## Notes
+
+Paper reviews and field notes on mechanistic interpretability.
 
 ::: {#notes}
 :::
+::::
 
+:::: {.g-col-12 .g-col-md-6 .research-col}
 ## Research
+
+Replications and original work.
 
 ::: {#research}
 :::
+::::
+
+:::::

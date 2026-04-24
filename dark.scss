@@ -1,0 +1,114 @@
+/*-- scss:defaults --*/
+
+// Terminal-inspired palette. Base is cosmo so typography/spacing stay identical
+// to light mode; only colors change.
+
+$navbar-bg:    #2b2a2a;   // top bar + title banner (RGB 43, 42, 42)
+$body-bg:      #1e1e1e;   // main content background (RGB 30, 30, 30)
+$body-color:   #d4d4d4;   // default text
+$link-color:   #4ec9b0;   // terminal teal
+$code-color:   #ce9178;   // terminal orange (inline code text)
+$border-color: #3d4147;
+
+// Code block + inline code backgrounds. These override cosmo's light defaults
+// so Quarto's compiled CSS bakes in the dark values from the start.
+$pre-bg:             #252525;
+$pre-color:          #d4d4d4;
+$code-bg:            #2b2a2a;
+$code-block-bg:      #252525;   // Quarto's div.sourceCode container
+$code-block-bg-alpha: 0;         // kill Quarto's translucent light overlay
+
+/*-- scss:rules --*/
+
+body {
+  background-color: $body-bg;
+  color: $body-color;
+}
+
+// Navbar + secondary (sidebar/sub) bar
+.navbar,
+.quarto-secondary-nav {
+  background-color: $navbar-bg !important;
+  border-bottom: 1px solid $border-color;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link,
+.quarto-secondary-nav .nav-link {
+  color: #d4d4d4 !important;
+}
+
+.navbar .nav-link:hover,
+.quarto-secondary-nav .nav-link:hover {
+  color: #ffffff !important;
+}
+
+// Title banner (the big header strip on pages with title-block-banner)
+.quarto-title-banner {
+  background-color: $navbar-bg !important;
+  border-bottom: 1px solid $border-color;
+}
+
+.quarto-title-banner h1.title,
+.quarto-title-banner .title {
+  color: #f8f9fa !important;
+}
+
+.quarto-title-banner .description,
+.quarto-title-banner .subtitle {
+  color: #adb5bd !important;
+}
+
+// Listings
+.quarto-listing-default .quarto-post {
+  border-color: $border-color !important;
+}
+
+.notes-col .quarto-listing-default,
+.research-col .quarto-listing-default {
+  border-top-color: $border-color !important;
+}
+
+@media (min-width: 768px) {
+  .notes-col {
+    border-right-color: $border-color !important;
+  }
+}
+
+// Code blocks + inline code. Belt-and-suspenders over the SCSS defaults
+// above — cosmo still emits some explicit light-gray rules, so we override
+// them with matching specificity here.
+pre,
+div.sourceCode,
+div.sourceCode pre.sourceCode {
+  background-color: #252525 !important;
+  border: 1px solid $border-color !important;
+  color: #d4d4d4;
+}
+
+code {
+  background-color: #2b2a2a !important;
+  color: $code-color;
+}
+
+pre code,
+pre code.sourceCode {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+// Inline <code> inside prose paragraphs — cosmo sets these explicitly
+p code:not(.sourceCode),
+li code:not(.sourceCode),
+td code:not(.sourceCode),
+p code.sourceCode,
+li code.sourceCode,
+td code.sourceCode {
+  background-color: #2b2a2a !important;
+  color: $code-color !important;
+}
+
+// Syntax highlighting: copy button + annotation anchor on dark blocks
+.code-copy-button {
+  color: #adb5bd !important;
+}

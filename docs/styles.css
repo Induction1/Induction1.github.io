@@ -1,1 +1,114 @@
 /* css styles */
+
+/* Title block banner — padding applies to both modes; colors only in light.
+   Dark-mode colors live in dark.scss. */
+.quarto-title-banner {
+    padding-top: 2rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.quarto-light .quarto-title-banner {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.navbar {
+    --bs-navbar-padding-y: 0.5rem !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: #495057;
+}
+
+.navbar .nav-link:hover {
+    color: #212529;
+}
+
+/* Sun / moon icon for the theme toggle.
+   Not alternate = currently light → show moon (click to go dark).
+   Alternate = currently dark → show sun (click to go light). */
+.navbar .quarto-color-scheme-toggle:not(.alternate) .bi::before {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(73,80,87,1)' viewBox='0 0 16 16'><path d='M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278'/></svg>") !important;
+}
+
+.navbar .quarto-color-scheme-toggle.alternate .bi::before {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(212,212,212,1)' viewBox='0 0 16 16'><path d='M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708'/></svg>") !important;
+}
+
+main.quarto-banner-title-block {
+    padding-top: 0 !important;
+}
+
+.quarto-title-banner h1.title {
+    color: #212529;
+}
+
+.quarto-title-banner .description {
+    color: #6c757d;
+}
+
+/* Two-column scrollable listing sections on index page */
+#notes .quarto-listing-default,
+#research .quarto-listing-default {
+    max-height: 65vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+/* Move h2 divider line to sit above the listing (after flavor text) */
+.notes-col h2,
+.research-col h2 {
+    border-bottom: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.notes-col .quarto-listing-default,
+.research-col .quarto-listing-default {
+    border-top: 1px solid #dee2e6;
+    padding-top: 0.5rem;
+}
+
+/* Subtle divider between columns on index page */
+@media (min-width: 768px) {
+    .notes-col {
+        border-right: 1px solid #dee2e6;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Expand listing item body to fill available width */
+.quarto-listing-default .quarto-post {
+    display: grid !important;
+    grid-template-columns: 16ch 1fr !important;
+}
+
+.quarto-listing-default .quarto-post .thumbnail {
+    display: none !important;
+}
+
+.quarto-listing-default .quarto-post .metadata {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start;
+}
+
+.quarto-listing-default .quarto-post .body {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quarto-listing-default .quarto-post .body .listing-title {
+    order: 1;
+}
+.quarto-listing-default .quarto-post .body .listing-description {
+    order: 2;
+}
+.quarto-listing-default .quarto-post .body .listing-categories {
+    order: 3;
+}

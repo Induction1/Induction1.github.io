@@ -17,12 +17,16 @@ website:
     right:
       - icon: github
         href: https://github.com/Induction1
+        target: _blank
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
+      dark: [cosmo, dark.scss]
     css: styles.css
     toc: true
+    link-external-newwindow: true
 
 
 

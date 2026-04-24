@@ -19,6 +19,7 @@
 
 
 
+
 <p>Notes on <a href="https://arxiv.org/abs/2305.04388">Turpin, Michael, Perez, and Bowman (2023)</a>, with a replication on Claude Haiku. This paper runs one of the first systematic tests of chain of thought faithfulness: can the reasoning a model writes actually be trusted to explain its answer? The findings are unambiguous. Models can be reliably steered toward incorrect answers by features they never mention in their reasoning. The paper covers two biasing features on BIG-Bench Hard and a social stereotype analysis on BBQ. I replicated the BIG-Bench Hard experiment on three tasks using a modern model.</p>
 <section id="the-paper" class="level2">
 <h2 class="anchored" data-anchor-id="the-paper">The paper</h2>
