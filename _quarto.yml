@@ -27,6 +27,9 @@ format:
     css: styles.css
     toc: true
     link-external-newwindow: true
+    highlight-style:
+      light: github
+      dark: vim-dark
 
 
 
