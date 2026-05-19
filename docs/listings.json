@@ -9,6 +9,7 @@
   {
     "listing": "/research.html",
     "items": [
+      "/research/cot-safety-injection/index.html",
       "/research/turpin-replication/index.html"
     ]
   },
@@ -17,6 +18,7 @@
     "items": [
       "/notes/starting-out/index.html",
       "/notes/transformer-circuits/index.html",
+      "/research/cot-safety-injection/index.html",
       "/research/turpin-replication/index.html"
     ]
   }

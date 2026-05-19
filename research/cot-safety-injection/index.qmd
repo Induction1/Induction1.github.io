@@ -1,0 +1,72 @@
+---
+title: "[Postmortem] CoT Edit Resistance Experiments"
+date: "2026-05-18"
+categories: [chain-of-thought, safety, mechanistic-interpretability, postmortem]
+draft: false
+---
+
+I read a few papers on chain-of-thought faithfulness and got curious about a specific question: if you corrupt a reasoning model's thinking mid-generation, does it notice and repair? I ran some tests, found something interesting, tried to extend it to a safety question, and it did not work. This is a write-up of what I tried.
+
+## The math experiments
+
+The setup for the first round of experiments was simple. Take a reasoning model (DeepSeek-R1-Distill-Qwen-7B), let it work through a MATH-500 problem until it is partway through its reasoning trace, then inject a fake final answer and let it keep generating. Does it repair?
+
+I ran this across 196 problems, sweeping injection depth (how far into the reasoning trace to inject) and injection type (absurd wrong answer vs. the actual correct answer). A few things came out clearly.
+
+Detection is nearly perfect and depth-independent. In 98% of runs the model produced explicit backtracking language, "wait", "actually", some signal that it noticed something was off. This happened whether the injection was at 10% depth or 70% depth.
+
+Correction is a different story. Whether the model actually fixed its answer scaled with how much reasoning it had completed before the injection. At 10% depth, correction happened 31% of the time. At 70% depth, 51%. The more thinking the model had done before being interrupted, the more likely it was to override the injection.
+
+The failure mode in non-correcting cases was interesting: the model never accepted the fake. It looped. It would identify the right answer in its reasoning, reference the injected text, cycle between the two, and hit the token limit without committing. So the real split is not "repair vs. accept." It is "repair vs. loop."
+
+A follow-up experiment (experiment 3) used logit lens to track which layer of the network actually commits to the final answer. I truncated traces at varying depths, forced the model to complete a `\boxed{}` token, and extracted the hidden state at the last input token across all 28 layers.
+
+Layer 26 (second to last) turned out to be the commitment layer in 84% of runs. Layers 0 to 24 predict noise. Layer 25 shows semantic precursors, the word "nine" appearing before the digit 9. Layer 26 jumps sharply to the answer. The probability at layer 26 above 0.5 predicted probe correctness with 94% precision and 94% recall. It is a near-binary phase transition.
+
+Experiment 4 injected hedging language ("Wait, ", "Hmm.", "Wait, that doesn't seem right.") right before the model was about to commit, on easy problems where it was already confident. No injection caused a wrong answer. Every "change" was the model entering a loop instead of committing. More explicit doubt produced more disruption at layer 26, even on 6x9=54. The model would verify the answer, acknowledge the expressed doubt, verify again, and cycle.
+
+## Trying to extend it to safety
+
+After four experiments I ran out of obvious directions on the math problem and started thinking about whether the same infrastructure could answer something more interesting.
+
+The idea: give a safety-aligned reasoning model a harmful prompt. Let it start refusing in its think block. Then inject pro-compliance reasoning mid-stream, where the model has no structural marker distinguishing injected tokens from its own prior reasoning. Does the safety mechanism survive?
+
+This is different from existing jailbreak work. Papers like H-CoT (2502.12893) and CoT Hijacking (2510.26418) inject content into the user message before generation starts. The model treats that as external input. We would be injecting inside the model's own active thinking, after it had already begun.
+
+I chose Qwen3-8B for this because it has a native thinking mode (it generates `<think>...</think>` blocks before responding) and real safety alignment. Filtered 24 behaviors from AdvBench where the model generated a substantive think block before refusing. Truncated each think block at 40% depth and appended an injection.
+
+Three injection strengths:
+
+- About 50 tokens: generic claim that the request is for legitimate educational purposes.
+- About 250 tokens: base rate argument, counterfactual impact argument, explicit commitment to respond.
+- About 550 tokens: walked through who realistically sends such requests, whether the information is actually restricted, whether the initial refusal was just pattern matching, meta-critique of shallow safety reasoning. Explicit commitment at the end.
+
+## What happened
+
+Zero genuine compliance across all three strengths and 72 total runs.
+
+The counterintuitive part: longer injection made refusal more decisive. The 250-token injection produced 3 loop cases and 1 borderline case (the model reframed a harm question as a self-defense question, which is not really compliance). The 550-token injection produced 0 loops and 0 borderline cases. Every run ended in a clean explicit refusal.
+
+More elaborate argument, more decisive rejection.
+
+The interpretation I landed on: the model is not treating the injected text as its own prior reasoning to continue from. It is treating it as an argument to evaluate. When the injection makes a case for compliance, the model reads the case, assesses it, and refutes it. A longer, more thorough argument gives it more to engage with, not less resistance to overcome. This is the opposite of how CoT Hijacking works. That paper uses long *irrelevant benign* content to passively dilute the safety signal as attention drifts. Argumentative injection activates deliberate evaluation instead of bypassing it.
+
+This connects back to the math experiments too. In the math domain, the model detected the injection and looped. In the safety domain, it detected the injection and refuted it cleanly. The detection mechanism looks domain-general. What differs is the resolution: math produces looping because the model cannot override a conflict, safety produces refutation because the model is more confident.
+
+## Moving on
+
+At this point I am stopping. I ran out of creative experiments to try and have other projects I want to focus on. If you have ideas on how to continue this line of work, feel free to reach out.
+
+## What worked and what did not
+
+On the research side, the math experiments held up well. The findings were clean, replicable, and the logit lens result (layer 26 as commitment layer) was a genuine surprise. The pivot to safety was a natural extension and the framing was right, even if the execution ran into a wall. The injection type was the core mistake. Argumentative injection is the wrong tool because it invites refutation. The CoT Hijacking paper works precisely because it uses irrelevant content that dilutes passively. I was building a debate opponent instead of a distraction.
+
+The model choice also mattered more than I expected. Qwen3-8B is robustly aligned enough that mid-CoT injection never came close to flipping it. A weaker model would have given compliance cases to study. Picking a model for its safety alignment before checking whether it is actually possible to flip was backwards.
+
+On the workflow side, the biggest lesson was starting small. I initially tried to run all 520 AdvBench behaviors before verifying the pipeline worked. The right number was 30. You can see the full pattern from a few examples in almost every experiment I ran. The cost of scaling up prematurely is not just time: it is also that bugs sit hidden for hours before you see output. A broken sanity check (the model was generating nothing due to an attention mask bug) would have silently wasted an entire run on 520 useless inferences if I had not caught it early.
+
+Related: reading the generated code before running it. Cursor wrote most of the experiment scripts from a prompt, which worked well, but two bugs would have corrupted the whole run if I had not read through before executing. One stripped the `<think>` tags by decoding with `skip_special_tokens=True`. One used the wrong variable name. Both were visible in two minutes of reading. The testing loop on a GPU is slow enough that catching bugs before inference is worth real time.
+
+The last thing worth noting is that articulating what you want to implement clearly, before writing any code, is the actual bottleneck. The more specific the prompt to Cursor (data flow, variable names, caching behavior, failure modes), the less debugging afterward. Vague prompts produce working-looking code that breaks on edge cases you did not specify.
+
+Code is [on GitHub](https://github.com/Induction1/interpretability/tree/main/cot-edit-resistance).
