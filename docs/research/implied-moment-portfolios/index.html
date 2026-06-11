@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-06-10">
+
+<title>[Paper] Implied Moment Indices and Volatility-Managed Portfolios – Michael Gao</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b10f89677f84a4618433c86b3682a1c3.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-09bcd2438ddda8166a810b4ec224e0a2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cc2114d3aeffb1b428b45723b6c02482.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-09bcd2438ddda8166a810b4ec224e0a2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Michael Gao</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../notes.html"> 
+<span class="menu-text">Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Induction1" target="_blank"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-framework" id="toc-the-framework" class="nav-link active" data-scroll-target="#the-framework">The framework</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#replicating-the-baseline" id="toc-replicating-the-baseline" class="nav-link" data-scroll-target="#replicating-the-baseline">Replicating the baseline</a></li>
+  <li><a href="#does-vix-beat-realized-variance" id="toc-does-vix-beat-realized-variance" class="nav-link" data-scroll-target="#does-vix-beat-realized-variance">Does VIX beat realized variance?</a></li>
+  <li><a href="#adding-skewness-and-kurtosis-by-hand" id="toc-adding-skewness-and-kurtosis-by-hand" class="nav-link" data-scroll-target="#adding-skewness-and-kurtosis-by-hand">Adding skewness and kurtosis by hand</a></li>
+  <li><a href="#letting-ml-find-the-mapping" id="toc-letting-ml-find-the-mapping" class="nav-link" data-scroll-target="#letting-ml-find-the-mapping">Letting ML find the mapping</a></li>
+  <li><a href="#the-ablation" id="toc-the-ablation" class="nav-link" data-scroll-target="#the-ablation">The ablation</a></li>
+  <li><a href="#robustness-or-where-the-result-lives-and-dies" id="toc-robustness-or-where-the-result-lives-and-dies" class="nav-link" data-scroll-target="#robustness-or-where-the-result-lives-and-dies">Robustness, or where the result lives and dies</a></li>
+  <li><a href="#my-takeaways" id="toc-my-takeaways" class="nav-link" data-scroll-target="#my-takeaways">My takeaways</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">[Paper] Implied Moment Indices and Volatility-Managed Portfolios</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">quant-finance</div>
+    <div class="quarto-category">machine-learning</div>
+    <div class="quarto-category">paper</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 10, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This post is not related to mechinterp. I am just finishing up a quantitative finance working paper, written under the advising of Prof.&nbsp;David Shimko at NYU, and the full draft is <a href="implied_moment_indices_vmp.pdf">here as a PDF</a>. The premise of this paper is that options markets price the entire future return distribution, and CBOE publishes free daily indices summarizing it. Can that forward looking information improve the simplest market timing strategy that works, or does a backward looking variance estimate already capture everything useful? This post walks through the paper, the code behind the main results, and a few takeaways that generalize beyond finance.</p>
+<p>The TLDR is mostly no, but the nuances are deeply informative.</p>
+<section id="the-framework" class="level2">
+<h2 class="anchored" data-anchor-id="the-framework">The framework</h2>
+<p>The baseline is <a href="https://doi.org/10.1111/jofi.12513">Moreira and Muir (2017)</a>, one of the cleanest results in empirical asset pricing. Each month, hold the market with weight inversely proportional to last month’s realized variance:</p>
+<p><span class="math display">\[f^{\sigma}_{t+1} = \frac{c}{\hat{\sigma}^2_t} \, f_{t+1}\]</span></p>
+<p>where <span class="math inline">\(f_{t+1}\)</span> is the market excess return and <span class="math inline">\(c\)</span> is a constant that scales the strategy to the same volatility as buy and hold, i.e.&nbsp;lever up when markets are calm, cut exposure when they are turbulent. The reason this works is an asymmetry in predictability: variance is strongly autocorrelated month to month, but expected returns barely move with it. So after a volatility spike you keep roughly the same expected return while carrying much more risk. The risk to return tradeoff is time varying, and variance is the predictable half of it.</p>
+<p>Performance is evaluated with a spanning regression of the managed return on the buy and hold return:</p>
+<p><span class="math display">\[f^{\sigma}_{t+1} = \alpha + \beta f_{t+1} + \varepsilon_{t+1}\]</span></p>
+<p>A positive significant <span class="math inline">\(\alpha\)</span> means the managed strategy expands the mean-variance frontier: you could not have gotten its returns by just holding more or less of the market. Alongside alpha, I report the information ratio (alpha per unit of residual risk), which matters later when alpha and Sharpe start disagreeing.</p>
+<p>The portfolio construction is short enough to show in full. The <code>shift(1)</code> means the weight applied to month <span class="math inline">\(t+1\)</span> uses only variance measured in month <span class="math inline">\(t\)</span>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vol_managed_portfolio(monthly_returns, variance_series, leverage_cap<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Moreira &amp; Muir Eq. 1: w_t = c / var_t, applied to next month's return."""</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    var_lagged <span class="op">=</span> variance_series.shift(<span class="dv">1</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    raw_w <span class="op">=</span> <span class="fl">1.0</span> <span class="op">/</span> var_lagged</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    valid <span class="op">=</span> np.isfinite(raw_w) <span class="op">&amp;</span> np.isfinite(monthly_returns) <span class="op">&amp;</span> (var_lagged <span class="op">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    raw_w, ret <span class="op">=</span> raw_w[valid], monthly_returns[valid]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># c normalizes to buy-and-hold volatility. It scales alpha and SE(alpha)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># equally, so it cancels out of the t-statistic.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> ret.std() <span class="op">/</span> (raw_w <span class="op">*</span> ret).std()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> raw_w <span class="op">*</span> c</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> leverage_cap <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> w.clip(upper<span class="op">=</span>leverage_cap)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> w <span class="op">*</span> (ret.std() <span class="op">/</span> (w <span class="op">*</span> ret).std())  <span class="co"># renormalize after capping</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame({<span class="st">'managed_ret'</span>: w <span class="op">*</span> ret, <span class="st">'bh_ret'</span>: ret, <span class="st">'weight'</span>: w})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note from literature: <a href="https://doi.org/10.1016/j.jfineco.2020.04.015">Cederburg, O’Doherty, Wang, and Yan (2020)</a> evaluate volatility management across 103 strategies and find that in-sample spanning alphas frequently fail to survive as real time, out-of-sample gains, because the coefficients mapping signals to weights drift across regimes. Everything in the paper that involves fitting anything is therefore done on expanding windows, using only data available at portfolio formation.</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>Market returns come from the Kenneth French Data Library: July 1926 through December 2025, which is 1,194 months and about 26,000 daily observations. Daily returns build the within-month realized moments. Realized variance for month <span class="math inline">\(t\)</span> is the sum of squared daily deviations, <span class="math inline">\(\text{RV}_t = \sum_{d \in t}(r_d - \bar{r}_t)^2\)</span>, and I compute realized skewness and excess kurtosis from the same daily returns.</p>
+<p>The implied side comes from four CBOE indices, each a scalar summary of one feature of the option-implied distribution:</p>
+<ul>
+<li><strong>VIX</strong> (1990 to present): 30 day model free implied volatility, converted to monthly implied variance as <span class="math inline">\((\text{VIX}/100)^2/12\)</span>.</li>
+<li><strong>CBOE SKEW</strong> (2010 to present): the cost of out-of-the-money puts relative to a symmetric distribution. It’s at 100 when the implied distribution is symmetric and rises as the left tail gets more expensive. Its sample average is 131, so the index prices a persistent crash premium.</li>
+<li><strong>VVIX</strong> (2007 to present): the volatility of VIX itself, used for uncertainty about volatility, which loads on the tails.</li>
+<li><strong>VIX3M</strong> (2006 to present): three month implied volatility, the slope VIX3M minus VIX measures the term structure, which inverts when near term fear spikes.</li>
+</ul>
+<p>One column of summary statistics does a lot of foreshadowing, the AR(1) coefficients. Monthly realized variance has an autocorrelation of 0.53 and VIX of 0.81. Realized skewness comes in at 0.11 and realized kurtosis at 0.02. Variance is persistent and therefore timeable. The higher realized moments are nearly white noise at the monthly frequency, which is a problem for any strategy that wants to condition on them.</p>
+</section>
+<section id="replicating-the-baseline" class="level2">
+<h2 class="anchored" data-anchor-id="replicating-the-baseline">Replicating the baseline</h2>
+<p>On the full 100 year sample, the RV-managed portfolio earns an annualized alpha of 4.56% with <span class="math inline">\(t = 3.10\)</span> and beta of 0.60. Moreira and Muir report 4.86% with <span class="math inline">\(t = 3.11\)</span> on a slightly shorter sample, so the replication is essentially exact. The Sharpe ratio rises from 0.450 (buy and hold) to 0.518. Adding the post publication decade of data neither sharpens nor weakens the original result, which is itself worth knowing given how many published anomalies decay out of sample.</p>
+</section>
+<section id="does-vix-beat-realized-variance" class="level2">
+<h2 class="anchored" data-anchor-id="does-vix-beat-realized-variance">Does VIX beat realized variance?</h2>
+<p>VIX should win, since it is a forward looking, model free variance estimate extracted from option prices, while trailing realized variance just assumes next month looks like last month. <a href="https://doi.org/10.1093/rfs/hhp008">Bollerslev, Tauchen, and Zhou (2009)</a> showed the gap between implied and realized variance predicts aggregate returns, so VIX contains real information beyond RV.</p>
+<p>As a forecaster, VIX wins decisively. Over 1990 to 2025, VIX implied variance predicts next month realized variance with an out-of-sample <span class="math inline">\(R^2\)</span> of 0.32. RV persistence (use this month’s variance as the forecast) scores negative 0.07, worse than just predicting the unconditional mean, because persistence forecasts overshoot badly around regime breaks like 2008 and COVID.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig4_forecast_scatter.png" class="img-fluid figure-img"></p>
+<figcaption>VIX forecasts vs.&nbsp;RV persistence forecasts against next month realized variance. The left panel has visible structure, while the right panel does not.</figcaption>
+</figure>
+</div>
+<p>As a portfolio signal, VIX loses:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Alpha (%)</th>
+<th>t-stat</th>
+<th>Beta</th>
+<th>Sharpe</th>
+<th>IR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RV-managed</td>
+<td>4.16</td>
+<td>1.99</td>
+<td>0.629</td>
+<td>0.653</td>
+<td>0.354</td>
+</tr>
+<tr class="even">
+<td>VIX-managed</td>
+<td>2.91</td>
+<td>1.80</td>
+<td>0.795</td>
+<td>0.670</td>
+<td>0.317</td>
+</tr>
+</tbody>
+</table>
+<p>The Sharpe column flips the ranking, and the resolution of that disagreement is the most instructive mechanism in the paper. Both portfolios are normalized to the same volatility by the constant <span class="math inline">\(c\)</span>, so the Sharpe gap cannot come from risk differences. It comes from beta. VIX moves smoothly (AR(1) of 0.81), so VIX managed weights stay near full market exposure and the portfolio inherits more of the equity premium: beta 0.795 against RV’s 0.629. RV managed weights react harder to volatility shocks, pulling the portfolio further from the market and generating more independent timing value (higher alpha) but less passive premium capture. The information ratio strips the beta channel out, and it agrees with alpha that RV is the better timing signal. A better forecast and a better portfolio are different objectives. <a href="https://doi.org/10.1016/j.irfa.2024.103353">Bozovic (2024)</a> reaches a consistent conclusion and argues VIX’s smoother weights mainly help through lower trading costs, not better gross timing.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig_cumulative_returns.png" class="img-fluid figure-img"></p>
+<figcaption>Cumulative wealth, 1990 to 2025. Both managed strategies build their entire lead before 2013 and roughly track buy and hold after.</figcaption>
+</figure>
+</div>
+</section>
+<section id="adding-skewness-and-kurtosis-by-hand" class="level2">
+<h2 class="anchored" data-anchor-id="adding-skewness-and-kurtosis-by-hand">Adding skewness and kurtosis by hand</h2>
+<p>If variance timing works, distribution timing should work better. <a href="https://doi.org/10.1111/0022-1082.00247">Harvey and Siddique (2000)</a> showed skewness is priced in the cross section of returns, and Conrad, Dittmar, and Ghysels (2013) found the same for option-implied moments. A risk averse investor should plausibly cut exposure when the distribution is unusually left skewed or fat tailed.</p>
+<p>The implementation multiplies the variance weight by z-score tilt factors, computed on expanding windows so nothing uses future information:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Expanding-window z-score, lagged one month</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>skew_z <span class="op">=</span> ((skew <span class="op">-</span> skew.expanding(<span class="dv">24</span>).mean()) <span class="op">/</span> skew.expanding(<span class="dv">24</span>).std()).shift(<span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>kurt_z <span class="op">=</span> ((kurt <span class="op">-</span> kurt.expanding(<span class="dv">24</span>).mean()) <span class="op">/</span> kurt.expanding(<span class="dv">24</span>).std()).shift(<span class="dv">1</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>skew_adj <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.2</span> <span class="op">*</span> skew_z).clip(<span class="fl">0.5</span>, <span class="fl">1.5</span>)   <span class="co"># more negative skew -&gt; less exposure</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>kurt_adj <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> <span class="fl">0.2</span> <span class="op">*</span> kurt_z).clip(<span class="fl">0.5</span>, <span class="fl">1.5</span>)   <span class="co"># fatter tails -&gt; less exposure</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> (c <span class="op">/</span> var_lagged) <span class="op">*</span> skew_adj <span class="op">*</span> kurt_adj</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The 0.2 coefficient means a one SD moment shock moves the position by 20%, and the clip keeps any single signal from more than doubling or halving the variance-implied weight. The moments are deliberately secondary to the variance signal.</p>
+<p>Every version of this hurts. Eight variants (realized skew, realized kurtosis, both, CBOE SKEW, combinations, across two sample periods) and all eight reduce alpha, Sharpe, and information ratio relative to variance only. On the full sample, alpha drops from 4.56% to between 4.25% and 4.34% depending on the variant; in the VIX era, from 2.91% to as low as 2.36%; with CBOE SKEW in the short post 2011 sample, to 1.53% and below.</p>
+<p>The explanation is in those AR(1) coefficients from the data section. Realized skewness at 0.11 and kurtosis at 0.02 mean last month’s distributional shape carries almost no information about next month’s, so the tilts add noise to a working signal. No reasonable rescaling of a nonpersistent signal extracts a timing rule from it. This matches <a href="https://doi.org/10.1287/mnsc.1110.1346">Kostakis, Panigirtzoglou, and Skiadopoulos (2011)</a>, who use the entire option-implied density for portfolio choice and conclude the forward looking mean, not the higher moments, drives their gains.</p>
+</section>
+<section id="letting-ml-find-the-mapping" class="level2">
+<h2 class="anchored" data-anchor-id="letting-ml-find-the-mapping">Letting ML find the mapping</h2>
+<p>Handcrafted linear tilts are a restrictive functional form, so the next step is to hand the signals to models that can find nonlinear structure. Four models (Ridge, Lasso, random forest, gradient boosting) are trained to forecast next-month realized variance from seven features: current RV, VIX implied variance, realized skew, realized kurtosis, lagged RV, the monthly VIX change, and an RV times skew interaction. The forecast then replaces <span class="math inline">\(\hat{\sigma}^2_t\)</span> in the portfolio formula.</p>
+<p>The loop is strict expanding window. The scaler is refit inside every iteration, on training data only, so the standardization never sees the future:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(MIN_TRAIN, <span class="bu">len</span>(df_ml)):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    X_train <span class="op">=</span> df_ml.loc[:t<span class="op">-</span><span class="dv">1</span>, feature_cols].values</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    y_train <span class="op">=</span> df_ml.loc[:t<span class="op">-</span><span class="dv">1</span>, <span class="st">'target_rv'</span>].values   <span class="co"># target_rv = rv.shift(-1)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    X_test  <span class="op">=</span> df_ml.loc[[t], feature_cols].values</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    X_train_s <span class="op">=</span> scaler.fit_transform(X_train)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    X_test_s  <span class="op">=</span> scaler.transform(X_test)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> name, template <span class="kw">in</span> models.items():</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> clone(template)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        model.fit(X_train_s, y_train)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        pred <span class="op">=</span> model.predict(X_test_s)[<span class="dv">0</span>]</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        ml_predictions[name][t] <span class="op">=</span> <span class="bu">max</span>(pred, <span class="fl">1e-6</span>)  <span class="co"># variance can't be negative</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For pure forecasting, the models land between the two benchmarks: out of sample <span class="math inline">\(R^2\)</span> of 0.14 to 0.21, all below VIX’s 0.32. For portfolios, the results split sharply by model class:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Alpha (%)</th>
+<th>t-stat</th>
+<th>Sharpe</th>
+<th>IR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RV baseline (same OOS months)</td>
+<td>4.20</td>
+<td>1.75</td>
+<td>0.641</td>
+<td>0.341</td>
+</tr>
+<tr class="even">
+<td>VIX baseline (same OOS months)</td>
+<td>3.36</td>
+<td>1.84</td>
+<td>0.692</td>
+<td>0.351</td>
+</tr>
+<tr class="odd">
+<td>Ridge</td>
+<td>-1.91</td>
+<td>-0.59</td>
+<td>-0.004</td>
+<td>-0.125</td>
+</tr>
+<tr class="even">
+<td>Lasso</td>
+<td>-0.87</td>
+<td>-0.29</td>
+<td>0.039</td>
+<td>-0.056</td>
+</tr>
+<tr class="odd">
+<td>Random forest</td>
+<td>3.07</td>
+<td>1.71</td>
+<td>0.675</td>
+<td>0.322</td>
+</tr>
+<tr class="even">
+<td>Gradient boosting</td>
+<td>3.72</td>
+<td>1.90</td>
+<td>0.687</td>
+<td>0.357</td>
+</tr>
+</tbody>
+</table>
+<p>The linear models do not merely underperform, they destroy value. Portfolio weight is proportional to <span class="math inline">\(1/\hat{\sigma}^2\)</span>, so forecast errors near zero get amplified enormously. Linear models extrapolate beyond their training range and occasionally emit near zero variance forecasts in calm regimes. The floor and the inversion turn those into giant positions. Tree models physically cannot do this. Their predictions are averages over training leaves and never fall below the minimum variance they have seen. The same feature set is safe in one model class and dangerous in another purely because of how the output gets consumed downstream.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig5_weight_distributions.png" class="img-fluid figure-img"></p>
+<figcaption>Distribution of monthly portfolio weights by strategy. Ridge spans an order of magnitude more than the tree models on the same features.</figcaption>
+</figure>
+</div>
+<p>This is also why models with worse forecasting <span class="math inline">\(R^2\)</span> than VIX still produce better portfolios than VIX. Mean squared error weights all errors equally, while inverse variance weighting concentrates everything on the low variance tail. <a href="https://doi.org/10.1093/rfs/hhaa009">Gu, Kelly, and Xiu (2020)</a> document the same tree over linear pattern across asset pricing prediction tasks broadly.</p>
+</section>
+<section id="the-ablation" class="level2">
+<h2 class="anchored" data-anchor-id="the-ablation">The ablation</h2>
+<p>Gradient boosting with all seven features is the best ML strategy, and the flattering interpretation is that ML extracts the higher moment signal the handcrafted tilts could not. The ablation test is to rerun gradient boosting with only the four variance features (RV, implied variance, lagged RV, VIX change).</p>
+<p>Variance only gradient boosting reaches alpha 3.33% with IR 0.332. The full feature set gets 3.72% and 0.357. So the increment from skewness and kurtosis is 0.39 percentage points of alpha and 0.025 of information ratio, and the feature importances imply that variance related features carry 85.7% of total importance, the higher moments 2.2% and 1.7% directly.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig2_feature_importance.png" class="img-fluid figure-img"></p>
+<figcaption>Gradient boosting feature importance, full specification. The model is mostly a nonlinear variance model.</figcaption>
+</figure>
+</div>
+<p>The conclusion is that gradient boosting wins through nonlinear variance modeling, and distributional information adds a modest increment on top. This one check changed the paper’s central claim, which is why I now consider ablations mandatory rather than optional.</p>
+</section>
+<section id="robustness-or-where-the-result-lives-and-dies" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-or-where-the-result-lives-and-dies">Robustness, or where the result lives and dies</h2>
+<p>Splitting the VIX era into subsamples shows the alpha is concentrated in time. From 1990 to 2012, RV managed earns alphas of 6.4% to 7.0% per subsample. From 2013 onward, it earns 0.65% with a t-stat of 0.17 and a Sharpe below buy and hold. The post 2012 regime (low volatility, QE, a buy and hold Sharpe of 0.88) gives a variance timer almost nothing to time. VIX managed holds up slightly better in that regime but is never significant in it. The full sample numbers are real, and they are also conditional on a volatility regime that has not existed for over a decade.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig3_rolling_alpha.png" class="img-fluid figure-img"></p>
+<figcaption>Rolling 60 month spanning alpha. The RV alpha collapses to zero after 2013.</figcaption>
+</figure>
+</div>
+<p>Leverage constraints cut the other way. The unconstrained RV strategy’s 99th-percentile weight is 5.16, a five times levered market position in its calmest months, which no actual risk desk would carry. Capping weights at 1.5 (the Reg-T limit) raises the Sharpe from 0.653 to 0.701 and the IR from 0.354 to 0.374, the best of any strategy in the paper, ML included. The extreme leverage months were noise. Expected returns do not quintuple when variance gets very low, so truncating those positions costs little alpha (4.16% to 3.67%) and removes a lot of residual variance. The t-stat actually rises. The most attractive strategy in the paper is also the most boring one, inverse realized variance, capped at 150%.</p>
+<p>Finally, the original motivating idea, timing with VIX, SKEW, and VVIX jointly as a stand in for the full implied distribution. On the samples where all three exist (2007 onward, 228 months; with SKEW, 2011 onward), nothing is significant. Gradient boosting tops out at <span class="math inline">\(t = 1.42\)</span>. But the baselines fail too. Plain RV and VIX management, highly significant over long samples, earn t-stats below 1.1 on the same window. The test does not say distributional timing fails. It says an 18 year sample dominated by a bull market cannot distinguish any of these strategies from noise, including the ones known to work.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig6_distrib_tstats.png" class="img-fluid figure-img"></p>
+<figcaption>Spanning t-stats for the distributional timing strategies. Nothing clears the significance thresholds, including the baselines.</figcaption>
+</figure>
+</div>
+<p>The paper closes this gap partially with a proof of concept, calibrating a full risk neutral density model (ARM, <a href="https://doi.org/10.3905/jod.2023.1.178">zur Linden 2023</a>) to six months of SPX option chains, where the ARM implied variance modestly outforecasts VIX at the daily frequency (<span class="math inline">\(R^2\)</span> 0.073 vs 0.059). A real test needs historical option chains going back decades, which is the data access problem flagged as future work.</p>
+</section>
+<section id="my-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="my-takeaways">My takeaways</h2>
+<p><strong>1. A better forecast is not a better decision.</strong> VIX beats RV decisively on forecasting <span class="math inline">\(R^2\)</span> and loses on portfolio alpha. The forecast metric and the decision objective weight errors differently, and the gap between them is where the surprises live. The same trap exists anywhere a proxy metric stands between you and the thing you care about. A probe with great decoding accuracy can still be the wrong handle for steering, because the intervention weights errors differently than the eval did.</p>
+<p><strong>2. Failures live in compositions, not components.</strong> Ridge is a reasonable variance forecaster and a catastrophic portfolio signal, for reasons visible only when you look at the forecaster and the inverse variance rule together. Evaluating components in isolation would never find this. Whatever system consumes your model’s output is part of the experiment.</p>
+<p><strong>3. Ablate your own headline result before someone else does.</strong> The “ML finds higher moment structure” story survived every test except the one where the higher moment features were removed. That check took an afternoon and rewrote the paper’s central claim. Whatever component your story depends on, remove exactly that component and see how much of the effect survives.</p>
+<p><strong>4. Audit for leakage like an adversary, and say so.</strong> Backtests are leakage machines, so the pipeline got the hostile-referee treatment. Scaler fit inside the training window only, signal timing strictly lagged, the one full sample constant shown to cancel out of the test statistic, inference rerun with Newey-West errors (t-stats drop 5 to 10%, all conclusions survive). The audit found nothing, which is the point. “Nothing after specifically hunting for the standard failure modes” is a much stronger claim than “nothing that I noticed.”</p>
+<p><strong>5. Sometimes the honest answer is that the sample cannot answer the question.</strong> The most novel test in the paper returns uniform insignificance, and so do the baselines next to it. The right conclusion was about statistical power, not about the hypothesis, and writing “this window cannot answer the question” instead of a hedged positive result was the hardest sentence in the paper.</p>
+<p>The full draft, with all the tables and the robustness appendix, is <a href="implied_moment_indices_vmp.pdf">here</a>. The paper is still getting updates, so if you find something broken in it, please reach out!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/induction1\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -10,7 +10,462 @@
 <atom:link href="https://induction1.github.io/research.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on mechanistic interpretability</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Mon, 18 May 2026 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 10 Jun 2026 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>[Paper] Implied Moment Indices and Volatility-Managed Portfolios</title>
+  <link>https://induction1.github.io/research/implied-moment-portfolios/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This post is not related to mechinterp. I am just finishing up a quantitative finance working paper, written under the advising of Prof.&nbsp;David Shimko at NYU, and the full draft is <a href="implied_moment_indices_vmp.pdf">here as a PDF</a>. The premise of this paper is that options markets price the entire future return distribution, and CBOE publishes free daily indices summarizing it. Can that forward looking information improve the simplest market timing strategy that works, or does a backward looking variance estimate already capture everything useful? This post walks through the paper, the code behind the main results, and a few takeaways that generalize beyond finance.</p>
+<p>The TLDR is mostly no, but the nuances are deeply informative.</p>
+<section id="the-framework" class="level2">
+<h2 class="anchored" data-anchor-id="the-framework">The framework</h2>
+<p>The baseline is <a href="https://doi.org/10.1111/jofi.12513">Moreira and Muir (2017)</a>, one of the cleanest results in empirical asset pricing. Each month, hold the market with weight inversely proportional to last month’s realized variance:</p>
+<p><img src="https://latex.codecogs.com/png.latex?f%5E%7B%5Csigma%7D_%7Bt+1%7D%20=%20%5Cfrac%7Bc%7D%7B%5Chat%7B%5Csigma%7D%5E2_t%7D%20%5C,%20f_%7Bt+1%7D"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?f_%7Bt+1%7D"> is the market excess return and <img src="https://latex.codecogs.com/png.latex?c"> is a constant that scales the strategy to the same volatility as buy and hold, i.e.&nbsp;lever up when markets are calm, cut exposure when they are turbulent. The reason this works is an asymmetry in predictability: variance is strongly autocorrelated month to month, but expected returns barely move with it. So after a volatility spike you keep roughly the same expected return while carrying much more risk. The risk to return tradeoff is time varying, and variance is the predictable half of it.</p>
+<p>Performance is evaluated with a spanning regression of the managed return on the buy and hold return:</p>
+<p><img src="https://latex.codecogs.com/png.latex?f%5E%7B%5Csigma%7D_%7Bt+1%7D%20=%20%5Calpha%20+%20%5Cbeta%20f_%7Bt+1%7D%20+%20%5Cvarepsilon_%7Bt+1%7D"></p>
+<p>A positive significant <img src="https://latex.codecogs.com/png.latex?%5Calpha"> means the managed strategy expands the mean-variance frontier: you could not have gotten its returns by just holding more or less of the market. Alongside alpha, I report the information ratio (alpha per unit of residual risk), which matters later when alpha and Sharpe start disagreeing.</p>
+<p>The portfolio construction is short enough to show in full. The <code>shift(1)</code> means the weight applied to month <img src="https://latex.codecogs.com/png.latex?t+1"> uses only variance measured in month <img src="https://latex.codecogs.com/png.latex?t">.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> vol_managed_portfolio(monthly_returns, variance_series, leverage_cap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>):</span>
+<span id="cb1-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Moreira &amp; Muir Eq. 1: w_t = c / var_t, applied to next month's return."""</span></span>
+<span id="cb1-3">    var_lagged <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> variance_series.shift(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-4">    raw_w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> var_lagged</span>
+<span id="cb1-5"></span>
+<span id="cb1-6">    valid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.isfinite(raw_w) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> np.isfinite(monthly_returns) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> (var_lagged <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb1-7">    raw_w, ret <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> raw_w[valid], monthly_returns[valid]</span>
+<span id="cb1-8"></span>
+<span id="cb1-9">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># c normalizes to buy-and-hold volatility. It scales alpha and SE(alpha)</span></span>
+<span id="cb1-10">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># equally, so it cancels out of the t-statistic.</span></span>
+<span id="cb1-11">    c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ret.std() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (raw_w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ret).std()</span>
+<span id="cb1-12">    w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> raw_w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> c</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> leverage_cap <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>:</span>
+<span id="cb1-15">        w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> w.clip(upper<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>leverage_cap)</span>
+<span id="cb1-16">        w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (ret.std() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ret).std())  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># renormalize after capping</span></span>
+<span id="cb1-17"></span>
+<span id="cb1-18">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> pd.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'managed_ret'</span>: w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ret, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bh_ret'</span>: ret, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'weight'</span>: w})</span></code></pre></div></div>
+<p>Note from literature: <a href="https://doi.org/10.1016/j.jfineco.2020.04.015">Cederburg, O’Doherty, Wang, and Yan (2020)</a> evaluate volatility management across 103 strategies and find that in-sample spanning alphas frequently fail to survive as real time, out-of-sample gains, because the coefficients mapping signals to weights drift across regimes. Everything in the paper that involves fitting anything is therefore done on expanding windows, using only data available at portfolio formation.</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>Market returns come from the Kenneth French Data Library: July 1926 through December 2025, which is 1,194 months and about 26,000 daily observations. Daily returns build the within-month realized moments. Realized variance for month <img src="https://latex.codecogs.com/png.latex?t"> is the sum of squared daily deviations, <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BRV%7D_t%20=%20%5Csum_%7Bd%20%5Cin%20t%7D(r_d%20-%20%5Cbar%7Br%7D_t)%5E2">, and I compute realized skewness and excess kurtosis from the same daily returns.</p>
+<p>The implied side comes from four CBOE indices, each a scalar summary of one feature of the option-implied distribution:</p>
+<ul>
+<li><strong>VIX</strong> (1990 to present): 30 day model free implied volatility, converted to monthly implied variance as <img src="https://latex.codecogs.com/png.latex?(%5Ctext%7BVIX%7D/100)%5E2/12">.</li>
+<li><strong>CBOE SKEW</strong> (2010 to present): the cost of out-of-the-money puts relative to a symmetric distribution. It’s at 100 when the implied distribution is symmetric and rises as the left tail gets more expensive. Its sample average is 131, so the index prices a persistent crash premium.</li>
+<li><strong>VVIX</strong> (2007 to present): the volatility of VIX itself, used for uncertainty about volatility, which loads on the tails.</li>
+<li><strong>VIX3M</strong> (2006 to present): three month implied volatility, the slope VIX3M minus VIX measures the term structure, which inverts when near term fear spikes.</li>
+</ul>
+<p>One column of summary statistics does a lot of foreshadowing, the AR(1) coefficients. Monthly realized variance has an autocorrelation of 0.53 and VIX of 0.81. Realized skewness comes in at 0.11 and realized kurtosis at 0.02. Variance is persistent and therefore timeable. The higher realized moments are nearly white noise at the monthly frequency, which is a problem for any strategy that wants to condition on them.</p>
+</section>
+<section id="replicating-the-baseline" class="level2">
+<h2 class="anchored" data-anchor-id="replicating-the-baseline">Replicating the baseline</h2>
+<p>On the full 100 year sample, the RV-managed portfolio earns an annualized alpha of 4.56% with <img src="https://latex.codecogs.com/png.latex?t%20=%203.10"> and beta of 0.60. Moreira and Muir report 4.86% with <img src="https://latex.codecogs.com/png.latex?t%20=%203.11"> on a slightly shorter sample, so the replication is essentially exact. The Sharpe ratio rises from 0.450 (buy and hold) to 0.518. Adding the post publication decade of data neither sharpens nor weakens the original result, which is itself worth knowing given how many published anomalies decay out of sample.</p>
+</section>
+<section id="does-vix-beat-realized-variance" class="level2">
+<h2 class="anchored" data-anchor-id="does-vix-beat-realized-variance">Does VIX beat realized variance?</h2>
+<p>VIX should win, since it is a forward looking, model free variance estimate extracted from option prices, while trailing realized variance just assumes next month looks like last month. <a href="https://doi.org/10.1093/rfs/hhp008">Bollerslev, Tauchen, and Zhou (2009)</a> showed the gap between implied and realized variance predicts aggregate returns, so VIX contains real information beyond RV.</p>
+<p>As a forecaster, VIX wins decisively. Over 1990 to 2025, VIX implied variance predicts next month realized variance with an out-of-sample <img src="https://latex.codecogs.com/png.latex?R%5E2"> of 0.32. RV persistence (use this month’s variance as the forecast) scores negative 0.07, worse than just predicting the unconditional mean, because persistence forecasts overshoot badly around regime breaks like 2008 and COVID.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig4_forecast_scatter.png" class="img-fluid figure-img"></p>
+<figcaption>VIX forecasts vs.&nbsp;RV persistence forecasts against next month realized variance. The left panel has visible structure, while the right panel does not.</figcaption>
+</figure>
+</div>
+<p>As a portfolio signal, VIX loses:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Alpha (%)</th>
+<th>t-stat</th>
+<th>Beta</th>
+<th>Sharpe</th>
+<th>IR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RV-managed</td>
+<td>4.16</td>
+<td>1.99</td>
+<td>0.629</td>
+<td>0.653</td>
+<td>0.354</td>
+</tr>
+<tr class="even">
+<td>VIX-managed</td>
+<td>2.91</td>
+<td>1.80</td>
+<td>0.795</td>
+<td>0.670</td>
+<td>0.317</td>
+</tr>
+</tbody>
+</table>
+<p>The Sharpe column flips the ranking, and the resolution of that disagreement is the most instructive mechanism in the paper. Both portfolios are normalized to the same volatility by the constant <img src="https://latex.codecogs.com/png.latex?c">, so the Sharpe gap cannot come from risk differences. It comes from beta. VIX moves smoothly (AR(1) of 0.81), so VIX managed weights stay near full market exposure and the portfolio inherits more of the equity premium: beta 0.795 against RV’s 0.629. RV managed weights react harder to volatility shocks, pulling the portfolio further from the market and generating more independent timing value (higher alpha) but less passive premium capture. The information ratio strips the beta channel out, and it agrees with alpha that RV is the better timing signal. A better forecast and a better portfolio are different objectives. <a href="https://doi.org/10.1016/j.irfa.2024.103353">Bozovic (2024)</a> reaches a consistent conclusion and argues VIX’s smoother weights mainly help through lower trading costs, not better gross timing.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig_cumulative_returns.png" class="img-fluid figure-img"></p>
+<figcaption>Cumulative wealth, 1990 to 2025. Both managed strategies build their entire lead before 2013 and roughly track buy and hold after.</figcaption>
+</figure>
+</div>
+</section>
+<section id="adding-skewness-and-kurtosis-by-hand" class="level2">
+<h2 class="anchored" data-anchor-id="adding-skewness-and-kurtosis-by-hand">Adding skewness and kurtosis by hand</h2>
+<p>If variance timing works, distribution timing should work better. <a href="https://doi.org/10.1111/0022-1082.00247">Harvey and Siddique (2000)</a> showed skewness is priced in the cross section of returns, and Conrad, Dittmar, and Ghysels (2013) found the same for option-implied moments. A risk averse investor should plausibly cut exposure when the distribution is unusually left skewed or fat tailed.</p>
+<p>The implementation multiplies the variance weight by z-score tilt factors, computed on expanding windows so nothing uses future information:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Expanding-window z-score, lagged one month</span></span>
+<span id="cb2-2">skew_z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ((skew <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> skew.expanding(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>).mean()) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> skew.expanding(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>).std()).shift(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-3">kurt_z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ((kurt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> kurt.expanding(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>).mean()) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> kurt.expanding(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>).std()).shift(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-4"></span>
+<span id="cb2-5">skew_adj <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> skew_z).clip(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># more negative skew -&gt; less exposure</span></span>
+<span id="cb2-6">kurt_adj <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> kurt_z).clip(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># fatter tails -&gt; less exposure</span></span>
+<span id="cb2-7"></span>
+<span id="cb2-8">w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> var_lagged) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> skew_adj <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> kurt_adj</span></code></pre></div></div>
+<p>The 0.2 coefficient means a one SD moment shock moves the position by 20%, and the clip keeps any single signal from more than doubling or halving the variance-implied weight. The moments are deliberately secondary to the variance signal.</p>
+<p>Every version of this hurts. Eight variants (realized skew, realized kurtosis, both, CBOE SKEW, combinations, across two sample periods) and all eight reduce alpha, Sharpe, and information ratio relative to variance only. On the full sample, alpha drops from 4.56% to between 4.25% and 4.34% depending on the variant; in the VIX era, from 2.91% to as low as 2.36%; with CBOE SKEW in the short post 2011 sample, to 1.53% and below.</p>
+<p>The explanation is in those AR(1) coefficients from the data section. Realized skewness at 0.11 and kurtosis at 0.02 mean last month’s distributional shape carries almost no information about next month’s, so the tilts add noise to a working signal. No reasonable rescaling of a nonpersistent signal extracts a timing rule from it. This matches <a href="https://doi.org/10.1287/mnsc.1110.1346">Kostakis, Panigirtzoglou, and Skiadopoulos (2011)</a>, who use the entire option-implied density for portfolio choice and conclude the forward looking mean, not the higher moments, drives their gains.</p>
+</section>
+<section id="letting-ml-find-the-mapping" class="level2">
+<h2 class="anchored" data-anchor-id="letting-ml-find-the-mapping">Letting ML find the mapping</h2>
+<p>Handcrafted linear tilts are a restrictive functional form, so the next step is to hand the signals to models that can find nonlinear structure. Four models (Ridge, Lasso, random forest, gradient boosting) are trained to forecast next-month realized variance from seven features: current RV, VIX implied variance, realized skew, realized kurtosis, lagged RV, the monthly VIX change, and an RV times skew interaction. The forecast then replaces <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Csigma%7D%5E2_t"> in the portfolio formula.</p>
+<p>The loop is strict expanding window. The scaler is refit inside every iteration, on training data only, so the standardization never sees the future:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> t <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(MIN_TRAIN, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(df_ml)):</span>
+<span id="cb3-2">    X_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df_ml.loc[:t<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, feature_cols].values</span>
+<span id="cb3-3">    y_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df_ml.loc[:t<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'target_rv'</span>].values   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># target_rv = rv.shift(-1)</span></span>
+<span id="cb3-4">    X_test  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df_ml.loc[[t], feature_cols].values</span>
+<span id="cb3-5"></span>
+<span id="cb3-6">    scaler <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> StandardScaler()</span>
+<span id="cb3-7">    X_train_s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler.fit_transform(X_train)</span>
+<span id="cb3-8">    X_test_s  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler.transform(X_test)</span>
+<span id="cb3-9"></span>
+<span id="cb3-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> name, template <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> models.items():</span>
+<span id="cb3-11">        model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> clone(template)</span>
+<span id="cb3-12">        model.fit(X_train_s, y_train)</span>
+<span id="cb3-13">        pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.predict(X_test_s)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb3-14">        ml_predictions[name][t] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(pred, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-6</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># variance can't be negative</span></span></code></pre></div></div>
+<p>For pure forecasting, the models land between the two benchmarks: out of sample <img src="https://latex.codecogs.com/png.latex?R%5E2"> of 0.14 to 0.21, all below VIX’s 0.32. For portfolios, the results split sharply by model class:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Alpha (%)</th>
+<th>t-stat</th>
+<th>Sharpe</th>
+<th>IR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RV baseline (same OOS months)</td>
+<td>4.20</td>
+<td>1.75</td>
+<td>0.641</td>
+<td>0.341</td>
+</tr>
+<tr class="even">
+<td>VIX baseline (same OOS months)</td>
+<td>3.36</td>
+<td>1.84</td>
+<td>0.692</td>
+<td>0.351</td>
+</tr>
+<tr class="odd">
+<td>Ridge</td>
+<td>-1.91</td>
+<td>-0.59</td>
+<td>-0.004</td>
+<td>-0.125</td>
+</tr>
+<tr class="even">
+<td>Lasso</td>
+<td>-0.87</td>
+<td>-0.29</td>
+<td>0.039</td>
+<td>-0.056</td>
+</tr>
+<tr class="odd">
+<td>Random forest</td>
+<td>3.07</td>
+<td>1.71</td>
+<td>0.675</td>
+<td>0.322</td>
+</tr>
+<tr class="even">
+<td>Gradient boosting</td>
+<td>3.72</td>
+<td>1.90</td>
+<td>0.687</td>
+<td>0.357</td>
+</tr>
+</tbody>
+</table>
+<p>The linear models do not merely underperform, they destroy value. Portfolio weight is proportional to <img src="https://latex.codecogs.com/png.latex?1/%5Chat%7B%5Csigma%7D%5E2">, so forecast errors near zero get amplified enormously. Linear models extrapolate beyond their training range and occasionally emit near zero variance forecasts in calm regimes. The floor and the inversion turn those into giant positions. Tree models physically cannot do this. Their predictions are averages over training leaves and never fall below the minimum variance they have seen. The same feature set is safe in one model class and dangerous in another purely because of how the output gets consumed downstream.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig5_weight_distributions.png" class="img-fluid figure-img"></p>
+<figcaption>Distribution of monthly portfolio weights by strategy. Ridge spans an order of magnitude more than the tree models on the same features.</figcaption>
+</figure>
+</div>
+<p>This is also why models with worse forecasting <img src="https://latex.codecogs.com/png.latex?R%5E2"> than VIX still produce better portfolios than VIX. Mean squared error weights all errors equally, while inverse variance weighting concentrates everything on the low variance tail. <a href="https://doi.org/10.1093/rfs/hhaa009">Gu, Kelly, and Xiu (2020)</a> document the same tree over linear pattern across asset pricing prediction tasks broadly.</p>
+</section>
+<section id="the-ablation" class="level2">
+<h2 class="anchored" data-anchor-id="the-ablation">The ablation</h2>
+<p>Gradient boosting with all seven features is the best ML strategy, and the flattering interpretation is that ML extracts the higher moment signal the handcrafted tilts could not. The ablation test is to rerun gradient boosting with only the four variance features (RV, implied variance, lagged RV, VIX change).</p>
+<p>Variance only gradient boosting reaches alpha 3.33% with IR 0.332. The full feature set gets 3.72% and 0.357. So the increment from skewness and kurtosis is 0.39 percentage points of alpha and 0.025 of information ratio, and the feature importances imply that variance related features carry 85.7% of total importance, the higher moments 2.2% and 1.7% directly.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig2_feature_importance.png" class="img-fluid figure-img"></p>
+<figcaption>Gradient boosting feature importance, full specification. The model is mostly a nonlinear variance model.</figcaption>
+</figure>
+</div>
+<p>The conclusion is that gradient boosting wins through nonlinear variance modeling, and distributional information adds a modest increment on top. This one check changed the paper’s central claim, which is why I now consider ablations mandatory rather than optional.</p>
+</section>
+<section id="robustness-or-where-the-result-lives-and-dies" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-or-where-the-result-lives-and-dies">Robustness, or where the result lives and dies</h2>
+<p>Splitting the VIX era into subsamples shows the alpha is concentrated in time. From 1990 to 2012, RV managed earns alphas of 6.4% to 7.0% per subsample. From 2013 onward, it earns 0.65% with a t-stat of 0.17 and a Sharpe below buy and hold. The post 2012 regime (low volatility, QE, a buy and hold Sharpe of 0.88) gives a variance timer almost nothing to time. VIX managed holds up slightly better in that regime but is never significant in it. The full sample numbers are real, and they are also conditional on a volatility regime that has not existed for over a decade.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig3_rolling_alpha.png" class="img-fluid figure-img"></p>
+<figcaption>Rolling 60 month spanning alpha. The RV alpha collapses to zero after 2013.</figcaption>
+</figure>
+</div>
+<p>Leverage constraints cut the other way. The unconstrained RV strategy’s 99th-percentile weight is 5.16, a five times levered market position in its calmest months, which no actual risk desk would carry. Capping weights at 1.5 (the Reg-T limit) raises the Sharpe from 0.653 to 0.701 and the IR from 0.354 to 0.374, the best of any strategy in the paper, ML included. The extreme leverage months were noise. Expected returns do not quintuple when variance gets very low, so truncating those positions costs little alpha (4.16% to 3.67%) and removes a lot of residual variance. The t-stat actually rises. The most attractive strategy in the paper is also the most boring one, inverse realized variance, capped at 150%.</p>
+<p>Finally, the original motivating idea, timing with VIX, SKEW, and VVIX jointly as a stand in for the full implied distribution. On the samples where all three exist (2007 onward, 228 months; with SKEW, 2011 onward), nothing is significant. Gradient boosting tops out at <img src="https://latex.codecogs.com/png.latex?t%20=%201.42">. But the baselines fail too. Plain RV and VIX management, highly significant over long samples, earn t-stats below 1.1 on the same window. The test does not say distributional timing fails. It says an 18 year sample dominated by a bull market cannot distinguish any of these strategies from noise, including the ones known to work.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://induction1.github.io/research/implied-moment-portfolios/fig6_distrib_tstats.png" class="img-fluid figure-img"></p>
+<figcaption>Spanning t-stats for the distributional timing strategies. Nothing clears the significance thresholds, including the baselines.</figcaption>
+</figure>
+</div>
+<p>The paper closes this gap partially with a proof of concept, calibrating a full risk neutral density model (ARM, <a href="https://doi.org/10.3905/jod.2023.1.178">zur Linden 2023</a>) to six months of SPX option chains, where the ARM implied variance modestly outforecasts VIX at the daily frequency (<img src="https://latex.codecogs.com/png.latex?R%5E2"> 0.073 vs 0.059). A real test needs historical option chains going back decades, which is the data access problem flagged as future work.</p>
+</section>
+<section id="my-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="my-takeaways">My takeaways</h2>
+<p><strong>1. A better forecast is not a better decision.</strong> VIX beats RV decisively on forecasting <img src="https://latex.codecogs.com/png.latex?R%5E2"> and loses on portfolio alpha. The forecast metric and the decision objective weight errors differently, and the gap between them is where the surprises live. The same trap exists anywhere a proxy metric stands between you and the thing you care about. A probe with great decoding accuracy can still be the wrong handle for steering, because the intervention weights errors differently than the eval did.</p>
+<p><strong>2. Failures live in compositions, not components.</strong> Ridge is a reasonable variance forecaster and a catastrophic portfolio signal, for reasons visible only when you look at the forecaster and the inverse variance rule together. Evaluating components in isolation would never find this. Whatever system consumes your model’s output is part of the experiment.</p>
+<p><strong>3. Ablate your own headline result before someone else does.</strong> The “ML finds higher moment structure” story survived every test except the one where the higher moment features were removed. That check took an afternoon and rewrote the paper’s central claim. Whatever component your story depends on, remove exactly that component and see how much of the effect survives.</p>
+<p><strong>4. Audit for leakage like an adversary, and say so.</strong> Backtests are leakage machines, so the pipeline got the hostile-referee treatment. Scaler fit inside the training window only, signal timing strictly lagged, the one full sample constant shown to cancel out of the test statistic, inference rerun with Newey-West errors (t-stats drop 5 to 10%, all conclusions survive). The audit found nothing, which is the point. “Nothing after specifically hunting for the standard failure modes” is a much stronger claim than “nothing that I noticed.”</p>
+<p><strong>5. Sometimes the honest answer is that the sample cannot answer the question.</strong> The most novel test in the paper returns uniform insignificance, and so do the baselines next to it. The right conclusion was about statistical power, not about the hypothesis, and writing “this window cannot answer the question” instead of a hedged positive result was the hardest sentence in the paper.</p>
+<p>The full draft, with all the tables and the robustness appendix, is <a href="implied_moment_indices_vmp.pdf">here</a>. The paper is still getting updates, so if you find something broken in it, please reach out!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>quant-finance</category>
+  <category>machine-learning</category>
+  <category>paper</category>
+  <guid>https://induction1.github.io/research/implied-moment-portfolios/</guid>
+  <pubDate>Wed, 10 Jun 2026 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>[Postmortem] CoT Edit Resistance Experiments</title>
   <link>https://induction1.github.io/research/cot-safety-injection/</link>
